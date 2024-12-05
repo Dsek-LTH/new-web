@@ -4,1055 +4,868 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 datasource db {
-    provider = "postgresql"
-    url = env("POSTGRES_URL")
-    directUrl = env("POSTGRES_URL_NON_POOLING")
+  provider  = "postgresql"
+  url       = env("POSTGRES_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 generator client {
-    provider = "prisma-client-js"
-    binaryTargets = ["native", "darwin-arm64"]
-    previewFeatures = ["fullTextSearch"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearchPostgres"]
 }
 
 enum BookingRequestStatus {
-    ACCEPTED
-    DENIED
-    PENDING
+  ACCEPTED
+  DENIED
+  PENDING
 }
 
 enum recurringType {
-    DAILY
-    WEEKLY
-    MONTHLY
-    YEARLY
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
 }
 
 enum DocumentType {
-    POLICY
-    GUIDELINE
-    MEETING
-    OTHER
-    PLAN_OF_OPERATIONS
-    FRAMEWORK_BUDGET
-    STRATEGIC_GOALS
-    @@map("document_type")
+  POLICY
+  GUIDELINE
+  MEETING
+  OTHER
+  PLAN_OF_OPERATIONS
+  FRAMEWORK_BUDGET
+  STRATEGIC_GOALS
+
+  @@map("document_type")
 }
 
 enum ShoppableType {
-    TICKET
+  TICKET
 }
 
 model User {
-    studentId String @id()
-    memberId String
-    policies String[]
-    externalCode String?
-    roles String[]
+  studentId    String   @id()
+  memberId     String
+  policies     String[]
+  externalCode String?
+  roles        String[]
 
-    @@ignore()
+  @@ignore()
 }
 
-/// @@allow('create', has(auth().policies, 'admin:settings:create'))
-/// @@allow('read', has(auth().policies, 'admin:settings:read'))
-/// @@allow('update', has(auth().policies, 'admin:settings:update'))
-/// @@allow('delete', has(auth().policies, 'admin:settings:delete'))
 model AdminSetting {
-    key String @id() @db.VarChar(255)
-    value String? @db.VarChar(255)
-    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-    updatedAt DateTime @updatedAt() @map("updated_at") @db.Timestamptz(6)
+  key       String   @id() @db.VarChar(255)
+  value     String?  @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt() @map("updated_at") @db.Timestamptz(6)
 
-    @@map("admin_settings")
+  @@map("admin_settings")
 }
 
-/// @@allow('all', has(auth().policies, 'alert'))
-/// @@allow('read', true)
-/// @@deny('read', removedAt != null)
 model Alert {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    severity String @db.VarChar(255)
-    message String @db.VarChar(255)
-    messageEn String @map("message_en") @db.VarChar(255)
-    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-    removedAt DateTime? @map("removed_at") @db.Timestamptz(6)
+  id        String    @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  severity  String    @db.VarChar(255)
+  message   String    @db.VarChar(255)
+  messageEn String    @map("message_en") @db.VarChar(255)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  removedAt DateTime? @map("removed_at") @db.Timestamptz(6)
 
-    @@map("alerts")
+  @@map("alerts")
 }
 
-/// @@allow('create', has(auth().policies, 'core:access:api:create'))
-/// @@allow('read', has(auth().policies, 'core:access:api:read'))
-/// @@allow('update', has(auth().policies, 'core:access:api:update'))
-/// @@allow('delete', has(auth().policies, 'core:access:api:delete'))
 model AccessPolicy {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    apiName String @map("api_name") @db.VarChar(255)
-    role String? @db.VarChar(255)
-    studentId String? @map("student_id") @db.VarChar(255)
-    member Member? @relation(fields: [studentId], references: [studentId], onDelete: NoAction, onUpdate: NoAction, map: "access_policies_member_id_foreign")
-    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  id        String   @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  apiName   String   @map("api_name") @db.VarChar(255)
+  role      String?  @db.VarChar(255)
+  studentId String?  @map("student_id") @db.VarChar(255)
+  member    Member?  @relation(fields: [studentId], references: [studentId], onDelete: NoAction, onUpdate: NoAction, map: "access_policies_member_id_foreign")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
-    @@map("api_access_policies")
+  @@map("api_access_policies")
 }
 
-/// @@allow('create', auth() != null)
-/// @@allow('read', true)
-/// @@allow('delete', has(auth().policies, 'news:article:comment:delete'))
-/// @@allow('delete', auth().memberId == memberId)
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model ArticleComment {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    articleId String @map("article_id") @db.Uuid()
-    memberId String @map("member_id") @db.Uuid()
-    content String? @db.VarChar(255)
-    published DateTime @db.Timestamptz(6)
-    article Article @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "article_comments_article_id_foreign")
-    member Member @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "article_comments_member_id_foreign")
+  id        String   @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  articleId String   @map("article_id") @db.Uuid()
+  memberId  String   @map("member_id") @db.Uuid()
+  content   String?  @db.VarChar(255)
+  published DateTime @db.Timestamptz(6)
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "article_comments_article_id_foreign")
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "article_comments_member_id_foreign")
 
-    @@map("article_comments")
+  @@map("article_comments")
 }
 
-/// @@allow('create', has(auth().policies, 'news:article:create'))
-/// @@allow('read', has(auth().policies, 'news:article:manage'))
-/// @@allow('read', auth().memberId == article.authorId)
-/// @@allow('update', has(auth().policies, 'news:article:manage'))
-/// @@allow('delete', auth().memberId == article.authorId)
-/// @@allow('delete', has(auth().policies, 'news:article:manage'))
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model ArticleRequest {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    articleId String? @unique(map: "article_requests_article_id_unique") @map("article_id") @db.Uuid()
-    approvedDatetime DateTime? @map("approved_datetime") @db.Timestamptz(6)
-    rejectedDatetime DateTime? @map("rejected_datetime") @db.Timestamptz(6)
-    rejectionReason String? @map("rejection_reason")
-    handledById String? @map("handled_by") @db.Uuid()
-    shouldSendNotification Boolean? @default(false) @map("should_send_notification")
-    notificationBody String? @map("notification_body") @db.VarChar(255)
-    notificationBodyEn String? @map("notification_body_en") @db.VarChar(255)
-    article Article? @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "article_requests_article_id_foreign")
-    handledBy Member? @relation(fields: [handledById], references: [id], onUpdate: NoAction, map: "article_requests_handled_by_foreign")
+  id                     String    @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  articleId              String?   @unique(map: "article_requests_article_id_unique") @map("article_id") @db.Uuid()
+  approvedDatetime       DateTime? @map("approved_datetime") @db.Timestamptz(6)
+  rejectedDatetime       DateTime? @map("rejected_datetime") @db.Timestamptz(6)
+  rejectionReason        String?   @map("rejection_reason")
+  handledById            String?   @map("handled_by") @db.Uuid()
+  shouldSendNotification Boolean?  @default(false) @map("should_send_notification")
+  notificationBody       String?   @map("notification_body") @db.VarChar(255)
+  notificationBodyEn     String?   @map("notification_body_en") @db.VarChar(255)
+  article                Article?  @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "article_requests_article_id_foreign")
+  handledBy              Member?   @relation(fields: [handledById], references: [id], onUpdate: NoAction, map: "article_requests_handled_by_foreign")
 
-    @@map("article_requests")
+  @@map("article_requests")
 }
 
-/// @@allow('create', has(auth().policies, 'news:article:create'))
-/// @@allow('read', has(auth().policies, 'news:article:read'))
-/// @@deny('read', removedAt != null && removedAt <= now() && !has(auth().policies, 'news:article:delete'))
-/// @@allow('update', has(auth().policies, 'news:article:update'))
-/// @@allow('update', auth().memberId == author.memberId)
-/// @@allow('delete', has(auth().policies, 'news:article:delete'))
-/// @@allow('delete', auth().memberId == author.memberId)
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Article {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    header String @db.VarChar(255)
-    headerEn String? @map("header_en") @db.VarChar(255)
-    body String
-    bodyEn String? @map("body_en")
-    imageUrl String? @map("image_url") @db.Text()
-    authorId String @map("author_id") @db.Uuid()
-    publishedAt DateTime? @map("published_datetime") @db.Timestamptz(6)
-    updatedAt DateTime? @map("latest_edit_datetime") @db.Timestamptz(6)
-    slug String @unique(map: "articles_slug_unique") @db.VarChar(255)
-    /// @allow('update', has(auth().policies, 'news:article:delete'))
-    removedAt DateTime? @map("removed_at") @db.Timestamptz(6)
-    status String? @default("approved")
-    createdAt DateTime @default(now()) @map("created_datetime") @db.Timestamptz(6)
-    comments ArticleComment[]
-    request ArticleRequest?
-    tags Tag[] @relation("article_tags")
-    author Author @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "articles_author_id_foreign")
-    likers Member[] @relation("article_likes")
+  id          String           @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  header      String           @db.VarChar(255)
+  headerEn    String?          @map("header_en") @db.VarChar(255)
+  body        String
+  bodyEn      String?          @map("body_en")
+  imageUrl    String?          @map("image_url") @db.Text()
+  authorId    String           @map("author_id") @db.Uuid()
+  publishedAt DateTime?        @map("published_datetime") @db.Timestamptz(6)
+  updatedAt   DateTime?        @map("latest_edit_datetime") @db.Timestamptz(6)
+  slug        String           @unique(map: "articles_slug_unique") @db.VarChar(255)
+  removedAt   DateTime?        @map("removed_at") @db.Timestamptz(6)
+  status      String?          @default("approved")
+  createdAt   DateTime         @default(now()) @map("created_datetime") @db.Timestamptz(6)
+  comments    ArticleComment[]
+  request     ArticleRequest?
+  tags        Tag[]            @relation("article_tags")
+  author      Author           @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "articles_author_id_foreign")
+  likers      Member[]         @relation("article_likes")
 
-    @@map("articles")
+  @@map("articles")
 }
 
-/// @@allow('create', has(auth().policies, 'news:article:create'))
-/// @@allow('read', has(auth().policies, 'news:article:read'))
-/// @@deny('read', type != 'Custom' && (startsWith(mandate.positionId, 'dsek.noll.stab.') || member.mandates?[startDate < now() && now() < endDate && startsWith(positionId, 'dsek.noll.stab.')]) && !has(auth().policies, 'member:see_staben') && auth().memberId != memberId)
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Author {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    /// @deny('read', member.mandates?[startDate < now() && now() < endDate && startsWith(positionId, 'dsek.noll.stab.')] && !has(auth().policies, 'member:see_staben') && auth().memberId != memberId)
-    memberId String @map("member_id") @db.Uuid()
-    mandateId String? @map("mandate_id") @db.Uuid()
-    customId String? @map("custom_id") @db.Uuid()
-    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-    updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-    type String? @default(dbgenerated("\nCASE\n    WHEN ((mandate_id IS NULL) AND (custom_id IS NULL)) THEN 'Member'::text\n    WHEN ((mandate_id IS NOT NULL) AND (custom_id IS NULL)) THEN 'Mandate'::text\n    WHEN ((mandate_id IS NULL) AND (custom_id IS NOT NULL)) THEN 'Custom'::text\n    ELSE NULL::text\nEND")) @db.VarChar(255)
-    articles Article[]
-    customAuthor CustomAuthor? @relation(fields: [customId], references: [id], onUpdate: NoAction, map: "authors_custom_id_foreign")
-    mandate Mandate? @relation(fields: [mandateId], references: [id], onUpdate: NoAction, map: "authors_mandate_id_foreign")
-    member Member @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "authors_member_id_foreign")
-    notifications Notification[]
+  id            String         @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  memberId      String         @map("member_id") @db.Uuid()
+  mandateId     String?        @map("mandate_id") @db.Uuid()
+  customId      String?        @map("custom_id") @db.Uuid()
+  createdAt     DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime       @default(now()) @map("updated_at") @db.Timestamptz(6)
+  type          String?        @default(dbgenerated("\nCASE\n    WHEN ((mandate_id IS NULL) AND (custom_id IS NULL)) THEN 'Member'::text\n    WHEN ((mandate_id IS NOT NULL) AND (custom_id IS NULL)) THEN 'Mandate'::text\n    WHEN ((mandate_id IS NULL) AND (custom_id IS NOT NULL)) THEN 'Custom'::text\n    ELSE NULL::text\nEND")) @db.VarChar(255)
+  articles      Article[]
+  customAuthor  CustomAuthor?  @relation(fields: [customId], references: [id], onUpdate: NoAction, map: "authors_custom_id_foreign")
+  mandate       Mandate?       @relation(fields: [mandateId], references: [id], onUpdate: NoAction, map: "authors_mandate_id_foreign")
+  member        Member         @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "authors_member_id_foreign")
+  notifications Notification[]
 
-    @@unique([memberId, mandateId, customId], map: "authors_member_id_mandate_id_custom_id_unique")
-    @@map("authors")
+  @@unique([memberId, mandateId, customId], map: "authors_member_id_mandate_id_custom_id_unique")
+  @@map("authors")
 }
 
 model BookableCategory {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    name String @db.VarChar(255)
-    nameEn String? @map("name_en") @db.VarChar(255)
-    bookables Bookable[]
+  id        String     @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  name      String     @db.VarChar(255)
+  nameEn    String?    @map("name_en") @db.VarChar(255)
+  bookables Bookable[]
 
-    @@map("bookable_categories")
+  @@map("bookable_categories")
 }
 
-/// @@allow('create', has(auth().policies, 'booking_request:bookable:create'))
-/// @@allow('read', has(auth().policies, 'booking_request:bookable:read'))
-/// @@allow('update', has(auth().policies, 'booking_request:bookable:update'))
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Bookable {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    name String @db.VarChar(255)
-    nameEn String? @map("name_en") @db.VarChar(255)
-    isDisabled Boolean @default(false)
-    categoryId String? @map("category_id") @db.Uuid()
-    door String? @db.VarChar(255)
-    category BookableCategory? @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "bookables_category_id_foreign")
-    bookings BookingRequest[] @relation("booking_requests_bookables")
+  id         String            @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  name       String            @db.VarChar(255)
+  nameEn     String?           @map("name_en") @db.VarChar(255)
+  isDisabled Boolean           @default(false)
+  categoryId String?           @map("category_id") @db.Uuid()
+  door       String?           @db.VarChar(255)
+  category   BookableCategory? @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "bookables_category_id_foreign")
+  bookings   BookingRequest[]  @relation("booking_requests_bookables")
 
-    @@map("bookables")
+  @@map("bookables")
 }
 
-/// @@allow('create', has(auth().policies, 'booking_request:create'))
-/// @@allow('read', has(auth().policies, 'booking_request:read'))
-/// @@allow('update', has(auth().policies, 'booking_request:update'))
-/// @@allow('delete', has(auth().policies, 'booking_request:delete'))
-/// @@allow('delete', auth().memberId == bookerId)
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model BookingRequest {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    bookerId String? @map("booker_id") @db.Uuid()
-    start DateTime? @db.Timestamptz(6)
-    end DateTime? @db.Timestamptz(6)
-    created DateTime? @default(now()) @db.Timestamptz(6)
-    event String? @db.VarChar(255)
-    status BookingRequestStatus @default(PENDING)
-    bookables Bookable[] @relation("booking_requests_bookables")
-    booker Member? @relation(fields: [bookerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "booking_requests_booker_id_foreign")
+  id        String               @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  bookerId  String?              @map("booker_id") @db.Uuid()
+  start     DateTime?            @db.Timestamptz(6)
+  end       DateTime?            @db.Timestamptz(6)
+  created   DateTime?            @default(now()) @db.Timestamptz(6)
+  event     String?              @db.VarChar(255)
+  status    BookingRequestStatus @default(PENDING)
+  bookables Bookable[]           @relation("booking_requests_bookables")
+  booker    Member?              @relation(fields: [bookerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "booking_requests_booker_id_foreign")
 
-    @@map("booking_requests")
+  @@map("booking_requests")
 }
 
 model Cart {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    studentId String @map("student_id") @db.VarChar(255)
-    totalPrice Float @map("total_price") @db.Real()
-    totalQuantity Int @map("total_quantity")
-    createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-    updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
-    expiresAt DateTime? @map("expires_at") @db.Timestamptz(6)
-    items CartItem[]
+  id            String     @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  studentId     String     @map("student_id") @db.VarChar(255)
+  totalPrice    Float      @map("total_price") @db.Real()
+  totalQuantity Int        @map("total_quantity")
+  createdAt     DateTime?  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime?  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  expiresAt     DateTime?  @map("expires_at") @db.Timestamptz(6)
+  items         CartItem[]
 
-    @@map("cart")
+  @@map("cart")
 }
 
 model CartItem {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    cartId String @map("cart_id") @db.Uuid()
-    productInventoryId String @unique() @map("product_inventory_id") @db.Uuid()
-    quantity Int
-    createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-    updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
-    cart Cart @relation(fields: [cartId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cart_item_cart_id_foreign")
-    productInventory ProductInventory @relation(fields: [productInventoryId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cart_item_product_inventory_id_foreign")
+  id                 String           @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  cartId             String           @map("cart_id") @db.Uuid()
+  productInventoryId String           @unique() @map("product_inventory_id") @db.Uuid()
+  quantity           Int
+  createdAt          DateTime?        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime?        @default(now()) @map("updated_at") @db.Timestamptz(6)
+  cart               Cart             @relation(fields: [cartId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cart_item_cart_id_foreign")
+  productInventory   ProductInventory @relation(fields: [productInventoryId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cart_item_product_inventory_id_foreign")
 
-    @@map("cart_item")
+  @@map("cart_item")
 }
 
-/// @@allow('create', has(auth().policies, 'core:committee:create'))
-/// @@allow('read', has(auth().policies, 'core:committee:read'))
-/// @@allow('update', has(auth().policies, 'core:committee:update'))
-/// @@allow('delete', has(auth().policies, 'core:committee:delete'))
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-commentsmodel Committees{
 model Committee {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    name String @db.VarChar(255)
-    nameEn String? @map("name_en") @db.VarChar(255)
-    shortName String? @unique() @map("short_name") @db.VarChar(255)
-    positions Position[]
-    darkImageUrl String? @map("dark_image_url") @db.Text()
-    lightImageUrl String? @map("light_image_url") @db.Text()
-    monoImageUrl String? @map("mono_image_url") @db.Text()
-    symbolUrl String? @map("symbol_url") @db.Text()
-    description String? @db.VarChar(255)
-    descriptionEn String? @map("description_en") @db.VarChar(255)
+  id            String     @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  name          String     @db.VarChar(255)
+  nameEn        String?    @map("name_en") @db.VarChar(255)
+  shortName     String?    @unique() @map("short_name") @db.VarChar(255)
+  positions     Position[]
+  darkImageUrl  String?    @map("dark_image_url") @db.Text()
+  lightImageUrl String?    @map("light_image_url") @db.Text()
+  monoImageUrl  String?    @map("mono_image_url") @db.Text()
+  symbolUrl     String?    @map("symbol_url") @db.Text()
+  description   String?    @db.VarChar(255)
+  descriptionEn String?    @map("description_en") @db.VarChar(255)
 
-    @@map("committees")
+  @@map("committees")
 }
 
-/// @@allow('create', has(auth().policies, 'news:article:create'))
-/// @@allow('read', has(auth().policies, 'news:article:read'))
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model CustomAuthorRole {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    customAuthorId String @map("custom_author_id") @db.Uuid()
-    role String @db.VarChar(255)
-    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-    updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-    customAuthor CustomAuthor @relation(fields: [customAuthorId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "custom_author_roles_custom_author_id_foreign")
+  id             String       @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  customAuthorId String       @map("custom_author_id") @db.Uuid()
+  role           String       @db.VarChar(255)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime     @default(now()) @map("updated_at") @db.Timestamptz(6)
+  customAuthor   CustomAuthor @relation(fields: [customAuthorId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "custom_author_roles_custom_author_id_foreign")
 
-    @@map("custom_author_roles")
+  @@map("custom_author_roles")
 }
 
-/// @@allow('create', has(auth().policies, 'news:article:create'))
-/// @@allow('read', has(auth().policies, 'news:article:read'))
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model CustomAuthor {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    name String @db.VarChar(255)
-    nameEn String? @map("name_en") @db.VarChar(255)
-    imageUrl String? @map("image_url") @db.Text()
-    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-    updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-    authors Author[]
-    roles CustomAuthorRole[]
+  id        String             @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  name      String             @db.VarChar(255)
+  nameEn    String?            @map("name_en") @db.VarChar(255)
+  imageUrl  String?            @map("image_url") @db.Text()
+  createdAt DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime           @default(now()) @map("updated_at") @db.Timestamptz(6)
+  authors   Author[]
+  roles     CustomAuthorRole[]
 
-    @@map("custom_authors")
+  @@map("custom_authors")
 }
 
-/// @@allow('create', has(auth().policies, 'core:access:door:create'))
-/// @@allow('read', has(auth().policies, 'core:access:door:read'))
-/// @@allow('update', has(auth().policies, 'core:access:door:update'))
-/// @@allow('delete', has(auth().policies, 'core:access:door:delete'))
 model DoorAccessPolicy {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    doorName String @map("door_name") @db.VarChar(255)
-    role String? @db.VarChar(255)
-    studentId String? @map("student_id") @db.VarChar(255)
-    member Member? @relation(fields: [studentId], references: [studentId], onDelete: NoAction, onUpdate: NoAction, map: "door_access_policies_member_id_foreign")
-    startDatetime DateTime? @map("start_datetime") @db.Timestamptz(6)
-    endDatetime DateTime? @map("end_datetime") @db.Timestamptz(6)
-    information String? @map("information") @db.VarChar(255)
-    isBan Boolean @map("is_ban") @default(false)
-    door Door @relation(fields: [doorName], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "door_access_policies_door_name_foreign")
+  id            String    @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  doorName      String    @map("door_name") @db.VarChar(255)
+  role          String?   @db.VarChar(255)
+  studentId     String?   @map("student_id") @db.VarChar(255)
+  member        Member?   @relation(fields: [studentId], references: [studentId], onDelete: NoAction, onUpdate: NoAction, map: "door_access_policies_member_id_foreign")
+  startDatetime DateTime? @map("start_datetime") @db.Timestamptz(6)
+  endDatetime   DateTime? @map("end_datetime") @db.Timestamptz(6)
+  information   String?   @map("information") @db.VarChar(255)
+  isBan         Boolean   @default(false) @map("is_ban")
+  door          Door      @relation(fields: [doorName], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "door_access_policies_door_name_foreign")
 
-    @@map("door_access_policies")
+  @@map("door_access_policies")
 }
 
-/// @@allow('create', has(auth().policies, 'core:access:door:create'))
-/// @@allow('read', has(auth().policies, 'core:access:door:read'))
-/// @@allow('delete', has(auth().policies, 'core:access:door:delete'))
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Door {
-    name String @id() @db.VarChar(255)
-    id String? @db.VarChar(255)
-    accessPolicies DoorAccessPolicy[]
-    verboseName String @map("verbose_name") @db.VarChar(255)
+  name           String             @id() @db.VarChar(255)
+  id             String?            @db.VarChar(255)
+  accessPolicies DoorAccessPolicy[]
+  verboseName    String             @map("verbose_name") @db.VarChar(255)
 
-    @@map("doors")
+  @@map("doors")
 }
 
-/// @@allow('create', has(auth().policies, 'core:mail:alias:create'))
-/// @@allow('read', has(auth().policies, 'core:mail:alias:read'))
-/// @@allow('update', has(auth().policies, 'core:mail:alias:update'))
-/// @@allow('delete', has(auth().policies, 'core:mail:alias:create'))
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model EmailAlias {
-    id String @id(map: "mail_aliases_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    positionId String @map("position_id") @db.VarChar(255)
-    email String @db.VarChar(255)
-    canSend Boolean @default(false) @map("can_send")
-    position Position @relation(fields: [positionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "email_aliases_position_id_foreign")
+  id         String   @id(map: "mail_aliases_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  positionId String   @map("position_id") @db.VarChar(255)
+  email      String   @db.VarChar(255)
+  canSend    Boolean  @default(false) @map("can_send")
+  position   Position @relation(fields: [positionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "email_aliases_position_id_foreign")
 
-    @@map("email_aliases")
+  @@map("email_aliases")
 }
 
-/// @@allow('create', has(auth().policies, 'event:comment'))
-/// @@allow('read', has(auth().policies, 'event:read'))
-/// @@allow('delete', has(auth().policies, 'event:comment:delete'))
-/// @@allow('delete', auth().memberId == memberId)
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model EventComment {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    eventId String @map("event_id") @db.Uuid()
-    memberId String @map("member_id") @db.Uuid()
-    content String?
-    published DateTime @db.Timestamptz(6)
-    event Event @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "event_comments_event_id_foreign")
-    member Member @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "event_comments_member_id_foreign")
+  id        String   @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  eventId   String   @map("event_id") @db.Uuid()
+  memberId  String   @map("member_id") @db.Uuid()
+  content   String?
+  published DateTime @db.Timestamptz(6)
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "event_comments_event_id_foreign")
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "event_comments_member_id_foreign")
 
-    @@map("event_comments")
+  @@map("event_comments")
 }
 
-/// @@allow('create', has(auth().policies, 'event:create'))
-/// @@allow('read', has(auth().policies, 'event:read'))
-/// @@allow('update', has(auth().policies, 'event:update'))
-/// @@allow('delete', has(auth().policies, 'event:delete'))
 model RecurringEvent {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    separationCount Int @map("separation_count")
-    recurringType recurringType @map("recurring_type")
-    authorId String @map("author_id") @db.Uuid()
-    startDatetime DateTime @map("start_datetime") @db.Timestamptz(6)
-    endDatetime DateTime @map("end_datetime") @db.Timestamptz(6)
-    events Event[]
-    author Member @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "events_author_id_foreign")
+  id              String        @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  separationCount Int           @map("separation_count")
+  recurringType   recurringType @map("recurring_type")
+  authorId        String        @map("author_id") @db.Uuid()
+  startDatetime   DateTime      @map("start_datetime") @db.Timestamptz(6)
+  endDatetime     DateTime      @map("end_datetime") @db.Timestamptz(6)
+  events          Event[]
+  author          Member        @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "events_author_id_foreign")
 }
 
-/// @@allow('create', has(auth().policies, 'event:create'))
-/// @@allow('read', has(auth().policies, 'event:read'))
-/// @@deny('read', removedAt != null && removedAt <= now() && !has(auth().policies, 'event:delete'))
-/// @@allow('update', has(auth().policies, 'event:update'))
-/// @@allow('delete', has(auth().policies, 'event:delete'))
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-commentsmodel Events{
 model Event {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    recurringParentId String? @db.Uuid() @map("recurring_parent_id")
-    isDetatched Boolean @default(false) @map("is_detatched")
-    title String @db.VarChar(255)
-    titleEn String? @map("title_en") @db.VarChar(255)
-    description String
-    descriptionEn String? @map("description_en")
-    imageUrl String? @db.Text()
-    link String? @db.VarChar(255)
-    location String? @db.VarChar(255)
-    organizer String @db.VarChar(255)
-    authorId String @map("author_id") @db.Uuid()
-    shortDescription String? @map("short_description") @db.VarChar(255)
-    shortDescriptionEn String? @map("short_description_en") @db.VarChar(255)
-    startDatetime DateTime @map("start_datetime") @db.Timestamptz(6)
-    endDatetime DateTime @map("end_datetime") @db.Timestamptz(6)
-    numberOfUpdates Int? @default(0) @map("number_of_updates")
-    slug String? @unique(map: "events_slug_unique") @db.VarChar(255)
-    alarmActive Boolean? @default(false) @map("alarm_active")
-    isCancelled Boolean? @default(false) @map("is_cancelled")
-    /// @allow('update', has(auth().policies, 'event:delete'))
-    removedAt DateTime? @map("removed_at") @db.Timestamptz(6)
-    comments EventComment[]
-    going Member[] @relation("event_going")
-    interested Member[] @relation("event_interested")
-    author Member @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "events_author_id_foreign")
-    tags Tag[] @relation("event_tags")
-    tickets Ticket[]
-    recurringEventParent RecurringEvent? @relation(fields: [recurringParentId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "recurring_event_parent")
+  id                   String          @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  recurringParentId    String?         @map("recurring_parent_id") @db.Uuid()
+  isDetatched          Boolean         @default(false) @map("is_detatched")
+  title                String          @db.VarChar(255)
+  titleEn              String?         @map("title_en") @db.VarChar(255)
+  description          String
+  descriptionEn        String?         @map("description_en")
+  imageUrl             String?         @db.Text()
+  link                 String?         @db.VarChar(255)
+  location             String?         @db.VarChar(255)
+  organizer            String          @db.VarChar(255)
+  authorId             String          @map("author_id") @db.Uuid()
+  shortDescription     String?         @map("short_description") @db.VarChar(255)
+  shortDescriptionEn   String?         @map("short_description_en") @db.VarChar(255)
+  startDatetime        DateTime        @map("start_datetime") @db.Timestamptz(6)
+  endDatetime          DateTime        @map("end_datetime") @db.Timestamptz(6)
+  numberOfUpdates      Int?            @default(0) @map("number_of_updates")
+  slug                 String?         @unique(map: "events_slug_unique") @db.VarChar(255)
+  alarmActive          Boolean?        @default(false) @map("alarm_active")
+  isCancelled          Boolean?        @default(false) @map("is_cancelled")
+  removedAt            DateTime?       @map("removed_at") @db.Timestamptz(6)
+  comments             EventComment[]
+  going                Member[]        @relation("event_going")
+  interested           Member[]        @relation("event_interested")
+  author               Member          @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "events_author_id_foreign")
+  tags                 Tag[]           @relation("event_tags")
+  tickets              Ticket[]
+  recurringEventParent RecurringEvent? @relation(fields: [recurringParentId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "recurring_event_parent")
 
-    @@map("events")
+  @@map("events")
 }
 
-/// @@allow('create', has(auth().policies, 'event:create'))
-/// @@allow('read', has(auth().policies, 'event:read'))
-/// @@allow('update', has(auth().policies, 'event:update'))
-/// @@allow('delete', has(auth().policies, 'event:delete'))
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model EventsTag {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    eventId String @map("event_id") @db.Uuid()
-    tagId String @map("tag_id") @db.Uuid()
+  id      String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  eventId String @map("event_id") @db.Uuid()
+  tagId   String @map("tag_id") @db.Uuid()
 
-    @@unique([eventId, tagId], map: "events_tags_event_id_tag_id_unique")
-    @@map("events_tags")
+  @@unique([eventId, tagId], map: "events_tags_event_id_tag_id_unique")
+  @@map("events_tags")
 }
 
-/// @@allow('create', auth().memberId == memberId)
-/// @@allow('update', auth().memberId == memberId && auth().memberId == future().memberId)
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model ExpoToken {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    memberId String? @map("member_id") @db.Uuid()
-    expoToken String @unique(map: "expo_tokens_expo_token_unique") @map("expo_token") @db.VarChar(255)
+  id        String  @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  memberId  String? @map("member_id") @db.Uuid()
+  expoToken String  @unique(map: "expo_tokens_expo_token_unique") @map("expo_token") @db.VarChar(255)
 
-    @@map("expo_tokens")
+  @@map("expo_tokens")
 }
 
-/// @@allow('create', has(auth().policies, 'governing_document:write'))
-/// @@allow('read', has(auth().policies, 'governing_document:read'))
-/// @@allow('delete', has(auth().policies, 'governing_document:write'))
-/// @@deny('read', deletedAt != null)
-/// @@allow('update', has(auth().policies, 'governing_document:write'))
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Document {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    title String @db.VarChar(255)
-    url String @db.VarChar(255)
-    type DocumentType
-    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-    updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-    deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+  id        String       @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  title     String       @db.VarChar(255)
+  url       String       @db.VarChar(255)
+  type      DocumentType
+  createdAt DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime     @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt DateTime?    @map("deleted_at") @db.Timestamptz(6)
 
-    @@map("documents")
+  @@map("documents")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-commentsmodel Keycloak{
 model Keycloak {
-    keycloakId String @id() @map("keycloak_id") @db.VarChar(255)
-    memberId String? @map("member_id") @db.Uuid()
+  keycloakId String  @id() @map("keycloak_id") @db.VarChar(255)
+  memberId   String? @map("member_id") @db.Uuid()
 
-    @@map("keycloak")
+  @@map("keycloak")
 }
 
-/// @@allow('create', has(auth().policies, 'core:mandate:create'))
-/// @@allow('read', has(auth().policies, 'core:mandate:read'))
-/// @@allow('update', has(auth().policies, 'core:mandate:update'))
-/// @@allow('delete', has(auth().policies, 'core:mandate:delete'))
-/// @@deny('read', positionId == 'dsek.noll.stab.mdlm' || positionId == 'dsek.noll.stab.oph' && !has(auth().policies, 'member:see_staben') && auth().memberId != memberId)
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-commentsmodel Mandates{
 model Mandate {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    memberId String @map("member_id") @db.Uuid()
-    positionId String @map("position_id") @db.VarChar(255)
-    startDate DateTime @map("start_date") @db.Date()
-    endDate DateTime @map("end_date") @db.Date()
-    inKeycloak Boolean @default(false) @map("in_keycloak")
-    authors Author[]
-    member Member @relation(fields: [memberId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mandates_member_id_foreign")
-    position Position @relation(fields: [positionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mandates_position_id_foreign")
-    /// @allow('update', auth().memberId == memberId || has(auth().policies, 'nollning:phaddrar:groups:manage'))
-    phadderInId String? @db.Uuid()
-    phadderIn PhadderGroup? @relation(fields: [phadderInId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  id          String        @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  memberId    String        @map("member_id") @db.Uuid()
+  positionId  String        @map("position_id") @db.VarChar(255)
+  startDate   DateTime      @map("start_date") @db.Date()
+  endDate     DateTime      @map("end_date") @db.Date()
+  inKeycloak  Boolean       @default(false) @map("in_keycloak")
+  authors     Author[]
+  member      Member        @relation(fields: [memberId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mandates_member_id_foreign")
+  position    Position      @relation(fields: [positionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mandates_position_id_foreign")
+  phadderInId String?       @db.Uuid()
+  phadderIn   PhadderGroup? @relation(fields: [phadderInId], references: [id], onDelete: SetNull, onUpdate: NoAction)
 
-    @@map("mandates")
+  @@map("mandates")
 }
 
-/// @@allow('read', true)
-/// @@allow('create', has(auth().policies, 'markdown:create'))
-/// @@allow('update', has(auth().policies, 'markdown:update'))
-/// @@allow('delete', has(auth().policies, 'markdown:delete'))
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-commentsmodel Markdowns{
 model Markdown {
-    name String @id() @db.VarChar(255)
-    markdown String
-    markdownEn String? @map("markdown_en")
+  name       String  @id() @db.VarChar(255)
+  markdown   String
+  markdownEn String? @map("markdown_en")
 
-    @@map("markdowns")
+  @@map("markdowns")
 }
 
-/// @@allow('create', has(auth().policies, 'fileHandler:documents:create'))
-/// @@allow('read', has(auth().policies, 'fileHandler:documents:read'))
-/// @@allow('update', has(auth().policies, 'fileHandler:documents:update'))
-/// @@allow('delete', has(auth().policies, 'fileHandler:documents:delete'))
 model Meeting {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    title String @db.VarChar(255)
-    date DateTime @db.Date()
-    url String @unique() @db.VarChar(255)
+  id    String   @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  title String   @db.VarChar(255)
+  date  DateTime @db.Date()
+  url   String   @unique() @db.VarChar(255)
 
-    @@map("meetings")
+  @@map("meetings")
 }
 
-/// @@allow('create', has(auth().policies, 'core:member:create'))
-/// @@allow('create', auth().studentId == studentId)
-/// @@allow('read', has(auth().policies, 'core:member:read'))
-/// @@allow('read', auth().studentId == studentId)
-/// @@allow('update', auth().studentId == studentId)
-/// @@allow('update', has(auth().policies, 'core:member:update'))
-/// @@allow('delete', has(auth().policies, 'core:member:delete'))
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-commentsmodel Members{
 model Member {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    studentId String? @unique(map: "members_student_id_unique") @map("student_id") @db.VarChar(255)
-    /// @deny('read', auth() == null)
-    email String? @unique() @db.VarChar(255)
-    firstName String? @map("first_name") @db.VarChar(255)
-    /// @deny('read', auth() == null)
-    nickname String? @db.VarChar(255)
-    lastName String? @map("last_name") @db.VarChar(255)
-    bio String? @db.Text()
-    picturePath String? @map("picture_path") @db.Text()
-    classProgramme String? @map("class_programme") @db.VarChar(255)
-    classYear Int? @map("class_year")
-    visible Boolean @default(true)
-    foodPreference String? @map("food_preference") @db.VarChar(255)
-    stripeCustomerId String? @map("stripe_customer_id")
-    nollningGroupId String? @map("nollning_group_id") @db.Uuid()
-    nollaIn PhadderGroup? @relation(fields: [nollningGroupId], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "members_nollning_group_id_foreign")
-    pingsFromMe Ping[] @relation("pings_from_memberTomembers")
-    pingsToMe Ping[] @relation("pings_to_memberTomembers")
-    likedArticles Article[] @relation("article_likes")
-    articleComments ArticleComment[]
-    articleRequests ArticleRequest[]
-    authors Author[]
-    eventComments EventComment[]
-    eventsGoingTos Event[] @relation("event_going")
-    eventsInterestedIns Event[] @relation("event_interested")
-    subscribedTags Tag[] @relation("member_tag_subscriptions")
-    authoredEvents Event[]
-    mandates Mandate[]
-    notifications Notification[]
-    subscriptionSettings SubscriptionSetting[]
-    memberSpecificPolicies AccessPolicy[]
-    doorAccessPolicies DoorAccessPolicy[]
-    shoppableAccessPolicies ShoppableAccessPolicy[]
-    authoredShoppables Shoppable[]
-    inventory Consumable[]
-    shopReservations ConsumableReservation[]
-    bookingRequests BookingRequest[]
-    recurringEvent RecurringEvent[]
+  id                      String                  @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  studentId               String?                 @unique(map: "members_student_id_unique") @map("student_id") @db.VarChar(255)
+  email                   String?                 @unique() @db.VarChar(255)
+  firstName               String?                 @map("first_name") @db.VarChar(255)
+  nickname                String?                 @db.VarChar(255)
+  lastName                String?                 @map("last_name") @db.VarChar(255)
+  bio                     String?                 @db.Text()
+  picturePath             String?                 @map("picture_path") @db.Text()
+  classProgramme          String?                 @map("class_programme") @db.VarChar(255)
+  classYear               Int?                    @map("class_year")
+  visible                 Boolean                 @default(true)
+  foodPreference          String?                 @map("food_preference") @db.VarChar(255)
+  stripeCustomerId        String?                 @map("stripe_customer_id")
+  nollningGroupId         String?                 @map("nollning_group_id") @db.Uuid()
+  nollaIn                 PhadderGroup?           @relation(fields: [nollningGroupId], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "members_nollning_group_id_foreign")
+  pingsFromMe             Ping[]                  @relation("pings_from_memberTomembers")
+  pingsToMe               Ping[]                  @relation("pings_to_memberTomembers")
+  likedArticles           Article[]               @relation("article_likes")
+  articleComments         ArticleComment[]
+  articleRequests         ArticleRequest[]
+  authors                 Author[]
+  eventComments           EventComment[]
+  eventsGoingTos          Event[]                 @relation("event_going")
+  eventsInterestedIns     Event[]                 @relation("event_interested")
+  subscribedTags          Tag[]                   @relation("member_tag_subscriptions")
+  authoredEvents          Event[]
+  mandates                Mandate[]
+  notifications           Notification[]
+  subscriptionSettings    SubscriptionSetting[]
+  memberSpecificPolicies  AccessPolicy[]
+  doorAccessPolicies      DoorAccessPolicy[]
+  shoppableAccessPolicies ShoppableAccessPolicy[]
+  authoredShoppables      Shoppable[]
+  inventory               Consumable[]
+  shopReservations        ConsumableReservation[]
+  bookingRequests         BookingRequest[]
+  recurringEvent          RecurringEvent[]
 
-    @@map("members")
+  @@map("members")
 }
 
-/// @@allow('update', auth().memberId == memberId)
-/// @@allow('delete', auth().memberId == memberId)
-/// @@allow('read', auth().memberId == memberId)
-/// @@allow('create', auth() != null)
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-commentsmodel Notifications{
 model Notification {
-    id Int @id() @default(autoincrement())
-    title String @db.VarChar(255)
-    message String @db.VarChar(255)
-    type String @db.VarChar(255)
-    link String @db.VarChar(255)
-    /// @allow('update', auth().memberId == memberId, true)
-    readAt DateTime? @map("read_at") @db.Timestamptz(6)
-    memberId String @map("member_id") @db.Uuid()
-    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-    updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-    fromAuthorId String? @map("from_author_id") @db.Uuid()
-    fromAuthor Author? @relation(fields: [fromAuthorId], references: [id], onUpdate: NoAction, map: "notifications_from_author_id_foreign")
-    toMember Member @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "notifications_member_id_foreign")
+  id           Int       @id() @default(autoincrement())
+  title        String    @db.VarChar(255)
+  message      String    @db.VarChar(255)
+  type         String    @db.VarChar(255)
+  link         String    @db.VarChar(255)
+  readAt       DateTime? @map("read_at") @db.Timestamptz(6)
+  memberId     String    @map("member_id") @db.Uuid()
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  fromAuthorId String?   @map("from_author_id") @db.Uuid()
+  fromAuthor   Author?   @relation(fields: [fromAuthorId], references: [id], onUpdate: NoAction, map: "notifications_from_author_id_foreign")
+  toMember     Member    @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "notifications_member_id_foreign")
 
-    @@map("notifications")
+  @@map("notifications")
 }
 
 model Order {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    studentId String @map("student_id") @db.VarChar(255)
-    paymentId String @map("payment_id") @db.Uuid()
-    totalPrice Float @map("total_price") @db.Real()
-    createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-    updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
-    payment Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "order_payment_id_foreign")
-    orderItems OrderItem[]
+  id         String      @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  studentId  String      @map("student_id") @db.VarChar(255)
+  paymentId  String      @map("payment_id") @db.Uuid()
+  totalPrice Float       @map("total_price") @db.Real()
+  createdAt  DateTime?   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime?   @default(now()) @map("updated_at") @db.Timestamptz(6)
+  payment    Payment     @relation(fields: [paymentId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "order_payment_id_foreign")
+  orderItems OrderItem[]
 
-    @@map("order")
+  @@map("order")
 }
 
 model OrderItem {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    orderId String @map("order_id") @db.Uuid()
-    productInventoryId String @map("product_inventory_id") @db.Uuid()
-    quantity Int
-    price Float @db.Real()
-    discountPercentage Float? @map("discount_percentage") @db.Real()
-    createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-    updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
-    order Order @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "order_item_order_id_foreign")
-    productInventory ProductInventory @relation(fields: [productInventoryId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "order_item_product_inventory_id_foreign")
+  id                 String           @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  orderId            String           @map("order_id") @db.Uuid()
+  productInventoryId String           @map("product_inventory_id") @db.Uuid()
+  quantity           Int
+  price              Float            @db.Real()
+  discountPercentage Float?           @map("discount_percentage") @db.Real()
+  createdAt          DateTime?        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime?        @default(now()) @map("updated_at") @db.Timestamptz(6)
+  order              Order            @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "order_item_order_id_foreign")
+  productInventory   ProductInventory @relation(fields: [productInventoryId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "order_item_product_inventory_id_foreign")
 
-    @@map("order_item")
+  @@map("order_item")
 }
 
 model Payment {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    studentId String @map("student_id") @db.VarChar(255)
-    swishId String @unique(map: "payment_swish_id_unique") @map("swish_id") @db.VarChar(255)
-    paymentMethod String @map("payment_method") @db.VarChar(255)
-    paymentStatus String @map("payment_status") @db.VarChar(255)
-    paymentAmount String @map("payment_amount") @db.VarChar(255)
-    paymentCurrency String @map("payment_currency") @db.VarChar(255)
-    createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-    updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
-    orders Order[]
+  id              String    @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  studentId       String    @map("student_id") @db.VarChar(255)
+  swishId         String    @unique(map: "payment_swish_id_unique") @map("swish_id") @db.VarChar(255)
+  paymentMethod   String    @map("payment_method") @db.VarChar(255)
+  paymentStatus   String    @map("payment_status") @db.VarChar(255)
+  paymentAmount   String    @map("payment_amount") @db.VarChar(255)
+  paymentCurrency String    @map("payment_currency") @db.VarChar(255)
+  createdAt       DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  orders          Order[]
 
-    @@map("payment")
+  @@map("payment")
 }
 
-/// @@allow('read', auth().memberId == fromMemberId || auth().memberId == toMemberId)
-/// @@allow('update', auth().memberId == fromMemberId || auth().memberId == toMemberId)
-/// @@allow('create', has(auth().policies, 'core:member:ping'))
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-commentsmodel Pings{
 model Ping {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    fromMemberId String? @map("from_member") @db.Uuid()
-    toMemberId String? @map("to_member") @db.Uuid()
-    fromSentAt DateTime @default(now()) @map("from_sent_at") @db.Timestamptz(6)
-    toSentAt DateTime? @map("to_sent_at") @db.Timestamptz(6)
-    createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-    count Int? @default(1)
-    fromMember Member? @relation("pings_from_memberTomembers", fields: [fromMemberId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "pings_from_member_foreign")
-    toMember Member? @relation("pings_to_memberTomembers", fields: [toMemberId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "pings_to_member_foreign")
+  id           String    @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  fromMemberId String?   @map("from_member") @db.Uuid()
+  toMemberId   String?   @map("to_member") @db.Uuid()
+  fromSentAt   DateTime  @default(now()) @map("from_sent_at") @db.Timestamptz(6)
+  toSentAt     DateTime? @map("to_sent_at") @db.Timestamptz(6)
+  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  count        Int?      @default(1)
+  fromMember   Member?   @relation("pings_from_memberTomembers", fields: [fromMemberId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "pings_from_member_foreign")
+  toMember     Member?   @relation("pings_to_memberTomembers", fields: [toMemberId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "pings_to_member_foreign")
 
-    @@unique([fromMemberId, toMemberId], map: "pings_from_member_to_member_unique")
-    @@map("pings")
+  @@unique([fromMemberId, toMemberId], map: "pings_from_member_to_member_unique")
+  @@map("pings")
 }
 
-/// @@allow('read', true)
-/// @@allow('create', has(auth().policies, 'nollning:phaddrar:groups:manage'))
-/// @@allow('update', has(auth().policies, 'nollning:phaddrar:groups:manage'))
-/// @@allow('delete', has(auth().policies, 'nollning:phaddrar:groups:manage'))
 model PhadderGroup {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    name String @db.VarChar(255)
-    description String? @db.Text()
-    year Int
-    imageUrl String? @map("image_url") @db.Text()
-    createdAt DateTime @default(now())
-    nollor Member[]
-    phaddrar Mandate[]
+  id          String    @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  name        String    @db.VarChar(255)
+  description String?   @db.Text()
+  year        Int
+  imageUrl    String?   @map("image_url") @db.Text()
+  createdAt   DateTime  @default(now())
+  nollor      Member[]
+  phaddrar    Mandate[]
 
-    @@map("phadder_groups")
+  @@map("phadder_groups")
 }
 
-/// @@allow('create', has(auth().policies, 'core:position:create'))
-/// @@allow('read', has(auth().policies, 'core:position:read'))
-/// @@allow('update', has(auth().policies, 'core:position:update'))
-/// @@allow('delete', has(auth().policies, 'core:position:delete'))
-/// @@deny('read', active == false && !has(auth().policies, 'core:position:inactive:read'))
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-commentsmodel Positions{
 model Position {
-    id String @id() @db.VarChar(255)
-    name String @db.VarChar(255)
-    nameEn String? @map("name_en") @db.VarChar(255)
-    committeeId String? @map("committee_id") @db.Uuid()
-    email String? @db.VarChar(255)
-    active Boolean @default(true)
-    boardMember Boolean @default(false) @map("board_member")
-    description String?
-    descriptionEn String? @map("description_en")
-    committee Committee? @relation(fields: [committeeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "positions_committee_id_foreign")
-    emailAliases EmailAlias[]
-    mandates Mandate[]
+  id            String       @id() @db.VarChar(255)
+  name          String       @db.VarChar(255)
+  nameEn        String?      @map("name_en") @db.VarChar(255)
+  committeeId   String?      @map("committee_id") @db.Uuid()
+  email         String?      @db.VarChar(255)
+  active        Boolean      @default(true)
+  boardMember   Boolean      @default(false) @map("board_member")
+  description   String?
+  descriptionEn String?      @map("description_en")
+  committee     Committee?   @relation(fields: [committeeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "positions_committee_id_foreign")
+  emailAliases  EmailAlias[]
+  mandates      Mandate[]
 
-    @@map("positions")
+  @@map("positions")
 }
 
-/// @@deny('read', deletedAt != null)
 model Product {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    name String @db.VarChar(255)
-    description String @db.VarChar(255)
-    price Int
-    imageUrl String @map("image_url") @db.Text()
-    categoryId String @map("category_id") @db.Uuid()
-    maxPerUser Int @default(1000) @map("max_per_user")
-    createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-    updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
-    deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
-    releaseDate DateTime @default(now()) @map("release_date") @db.Timestamptz(6)
-    productCategory ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_category_id_foreign")
-    productInventories ProductInventory[]
-    userInventoryItems UserInventoryItem[]
+  id                 String              @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  name               String              @db.VarChar(255)
+  description        String              @db.VarChar(255)
+  price              Int
+  imageUrl           String              @map("image_url") @db.Text()
+  categoryId         String              @map("category_id") @db.Uuid()
+  maxPerUser         Int                 @default(1000) @map("max_per_user")
+  createdAt          DateTime?           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime?           @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt          DateTime?           @map("deleted_at") @db.Timestamptz(6)
+  releaseDate        DateTime            @default(now()) @map("release_date") @db.Timestamptz(6)
+  productCategory    ProductCategory     @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_category_id_foreign")
+  productInventories ProductInventory[]
+  userInventoryItems UserInventoryItem[]
 
-    @@map("product")
+  @@map("product")
 }
 
-/// @@deny('read', deletedAt != null)
 model ProductCategory {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    name String @db.VarChar(255)
-    description String @db.VarChar(255)
-    createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-    updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
-    deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
-    products Product[]
-    userInventoryItems UserInventoryItem[]
+  id                 String              @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  name               String              @db.VarChar(255)
+  description        String              @db.VarChar(255)
+  createdAt          DateTime?           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime?           @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt          DateTime?           @map("deleted_at") @db.Timestamptz(6)
+  products           Product[]
+  userInventoryItems UserInventoryItem[]
 
-    @@map("product_category")
+  @@map("product_category")
 }
 
-/// @@deny('read', deletedAt != null)
 model ProductDiscount {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    name String @db.VarChar(255)
-    description String @db.VarChar(255)
-    discountPercentage Int @map("discount_percentage")
-    createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-    updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
-    deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
-    productInventories ProductInventory[]
+  id                 String             @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  name               String             @db.VarChar(255)
+  description        String             @db.VarChar(255)
+  discountPercentage Int                @map("discount_percentage")
+  createdAt          DateTime?          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime?          @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt          DateTime?          @map("deleted_at") @db.Timestamptz(6)
+  productInventories ProductInventory[]
 
-    @@map("product_discount")
+  @@map("product_discount")
 }
 
-/// @@deny('read', deletedAt != null)
 model ProductInventory {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    productId String @map("product_id") @db.Uuid()
-    productDiscountId String? @map("product_discount_id") @db.Uuid()
-    quantity Int
-    variant String? @db.VarChar(255)
-    createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-    updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
-    deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
-    productDiscount ProductDiscount? @relation(fields: [productDiscountId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_inventory_product_discount_id_foreign")
-    product Product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_inventory_product_id_foreign")
-    cartItems CartItem[]
-    orderItems OrderItem[]
-    userInventoryItems UserInventoryItem[]
+  id                 String              @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  productId          String              @map("product_id") @db.Uuid()
+  productDiscountId  String?             @map("product_discount_id") @db.Uuid()
+  quantity           Int
+  variant            String?             @db.VarChar(255)
+  createdAt          DateTime?           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime?           @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt          DateTime?           @map("deleted_at") @db.Timestamptz(6)
+  productDiscount    ProductDiscount?    @relation(fields: [productDiscountId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_inventory_product_discount_id_foreign")
+  product            Product             @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_inventory_product_id_foreign")
+  cartItems          CartItem[]
+  orderItems         OrderItem[]
+  userInventoryItems UserInventoryItem[]
 
-    @@map("product_inventory")
+  @@map("product_inventory")
 }
 
-/// @@allow('create', has(auth().policies, 'song:create'))
-/// @@allow('read', has(auth().policies, 'song:read'))
-/// @@deny('read', deletedAt != null)
-/// @@allow('update', has(auth().policies, 'song:update'))
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-commentsmodel Songs{
 model Song {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    title String @db.VarChar(255)
-    lyrics String
-    slug String @unique(map: "songs_slug_unique") @db.VarChar(255)
-    melody String? @db.VarChar(255)
-    category String? @db.VarChar(255)
-    createdAt DateTime? @map("created_at") @db.Timestamptz(6)
-    updatedAt DateTime? @map("updated_at") @db.Timestamptz(6)
-    deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+  id        String    @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  title     String    @db.VarChar(255)
+  lyrics    String
+  slug      String    @unique(map: "songs_slug_unique") @db.VarChar(255)
+  melody    String?   @db.VarChar(255)
+  category  String?   @db.VarChar(255)
+  createdAt DateTime? @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime? @map("updated_at") @db.Timestamptz(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
 
-    @@map("songs")
+  @@map("songs")
 }
 
-/// @@allow('create', has(auth().policies, 'core:mail:alias:create'))
-/// @@allow('read', has(auth().policies, 'core:mail:alias:read'))
-/// @@allow('delete', has(auth().policies, 'core:mail:alias:create'))
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model SpecialReceiver {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    email String @db.VarChar(255)
-    targetEmail String @map("target_email") @db.VarChar(255)
+  id          String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  email       String @db.VarChar(255)
+  targetEmail String @map("target_email") @db.VarChar(255)
 
-    @@map("special_receivers")
+  @@map("special_receivers")
 }
 
-/// @@allow('create', has(auth().policies, 'core:mail:alias:create'))
-/// @@allow('read', has(auth().policies, 'core:mail:alias:read'))
-/// @@allow('delete', has(auth().policies, 'core:mail:alias:create'))
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model SpecialSender {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    email String @db.VarChar(255)
-    studentId String @map("student_id") @db.VarChar(255)
-    keycloakId String? @map("keycloak_id") @db.VarChar(255)
+  id         String  @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  email      String  @db.VarChar(255)
+  studentId  String  @map("student_id") @db.VarChar(255)
+  keycloakId String? @map("keycloak_id") @db.VarChar(255)
 
-    @@map("special_senders")
+  @@map("special_senders")
 }
 
-/// @@allow('create', auth().memberId == memberId)
-/// @@allow('read', auth().memberId == memberId)
-/// @@allow('update', auth().memberId == memberId && auth().memberId == future().memberId)
-/// @@allow('delete', auth().memberId == memberId)
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model SubscriptionSetting {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    memberId String @map("member_id") @db.Uuid()
-    type String @db.VarChar(255)
-    pushNotification Boolean @default(false) @map("push_notification")
-    member Member @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "subscription_settings_member_id_foreign")
+  id               String  @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  memberId         String  @map("member_id") @db.Uuid()
+  type             String  @db.VarChar(255)
+  pushNotification Boolean @default(false) @map("push_notification")
+  member           Member  @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "subscription_settings_member_id_foreign")
 
-    @@unique([memberId, type])
-    @@map("subscription_settings")
+  @@unique([memberId, type])
+  @@map("subscription_settings")
 }
 
-/// @@allow('create', has(auth().policies, 'tags:create'))
-/// @@allow('read', has(auth().policies, 'tags:read'))
-/// @@allow('update', has(auth().policies, 'tags:update'))
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-commentsmodel Tags{
 model Tag {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    name String @db.VarChar(255)
-    nameEn String? @map("name_en") @db.VarChar(255)
-    color String? @db.VarChar(255)
-    isDefault Boolean? @default(false) @map("is_default")
-    events Event[] @relation("event_tags")
-    subscribedMembers Member[] @relation("member_tag_subscriptions")
-    articles Article[] @relation("article_tags")
+  id                String    @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  name              String    @db.VarChar(255)
+  nameEn            String?   @map("name_en") @db.VarChar(255)
+  color             String?   @db.VarChar(255)
+  isDefault         Boolean?  @default(false) @map("is_default")
+  events            Event[]   @relation("event_tags")
+  subscribedMembers Member[]  @relation("member_tag_subscriptions")
+  articles          Article[] @relation("article_tags")
 
-    @@map("tags")
+  @@map("tags")
 }
 
-/// @@deny('read', deletedAt != null)
 model UserInventory {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    studentId String @unique(map: "user_inventory_student_id_unique") @map("student_id") @db.VarChar(255)
-    createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-    updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
-    deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
-    userInventoryItems UserInventoryItem[]
+  id                 String              @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  studentId          String              @unique(map: "user_inventory_student_id_unique") @map("student_id") @db.VarChar(255)
+  createdAt          DateTime?           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime?           @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deletedAt          DateTime?           @map("deleted_at") @db.Timestamptz(6)
+  userInventoryItems UserInventoryItem[]
 
-    @@map("user_inventory")
+  @@map("user_inventory")
 }
 
 model UserInventoryItem {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    userInventoryId String @map("user_inventory_id") @db.Uuid()
-    productInventoryId String @map("product_inventory_id") @db.Uuid()
-    categoryId String @map("category_id") @db.Uuid()
-    studentId String @map("student_id") @db.VarChar(255)
-    name String @db.VarChar(255)
-    description String @db.VarChar(255)
-    imageUrl String @map("image_url") @db.Text()
-    paidPrice Float @map("paid_price") @db.Real()
-    variant String? @db.VarChar(255)
-    paidAt DateTime? @default(now()) @map("paid_at") @db.Timestamptz(6)
-    consumedAt DateTime? @map("consumed_at") @db.Timestamptz(6)
-    productId String? @map("product_id") @db.Uuid()
-    productCategory ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_inventory_item_category_id_foreign")
-    product Product? @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_inventory_item_product_id_foreign")
-    productInventory ProductInventory @relation(fields: [productInventoryId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_inventory_item_product_inventory_id_foreign")
-    userInventory UserInventory @relation(fields: [userInventoryId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_inventory_item_user_inventory_id_foreign")
+  id                 String           @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  userInventoryId    String           @map("user_inventory_id") @db.Uuid()
+  productInventoryId String           @map("product_inventory_id") @db.Uuid()
+  categoryId         String           @map("category_id") @db.Uuid()
+  studentId          String           @map("student_id") @db.VarChar(255)
+  name               String           @db.VarChar(255)
+  description        String           @db.VarChar(255)
+  imageUrl           String           @map("image_url") @db.Text()
+  paidPrice          Float            @map("paid_price") @db.Real()
+  variant            String?          @db.VarChar(255)
+  paidAt             DateTime?        @default(now()) @map("paid_at") @db.Timestamptz(6)
+  consumedAt         DateTime?        @map("consumed_at") @db.Timestamptz(6)
+  productId          String?          @map("product_id") @db.Uuid()
+  productCategory    ProductCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_inventory_item_category_id_foreign")
+  product            Product?         @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_inventory_item_product_id_foreign")
+  productInventory   ProductInventory @relation(fields: [productInventoryId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_inventory_item_product_inventory_id_foreign")
+  userInventory      UserInventory    @relation(fields: [userInventoryId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_inventory_item_user_inventory_id_foreign")
 
-    @@map("user_inventory_item")
+  @@map("user_inventory_item")
 }
 
 model LastKeycloakUpdate {
-    id Int @id() @default(autoincrement())
-    time DateTime
+  id   Int      @id() @default(autoincrement())
+  time DateTime
 
-    @@map("last_keycloak_update")
+  @@map("last_keycloak_update")
 }
 
-/// @@allow('create', hasSome(auth().policies, ['webshop:create', 'webshop:manage']) && authorId == auth().memberId)
-/// @@allow('update', auth().memberId == authorId || has(auth().policies, 'webshop:manage'))
-/// @@allow('read', true)
-/// @@deny('read', removedAt != null && !auth().memberId == authorId || has(auth().policies, 'webshop:manage'))
-/// @@allow('delete', has(auth().policies, 'webshop:manage'))
 model Shoppable {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    title String
-    titleEn String?
-    description String?
-    descriptionEn String?
-    type ShoppableType
-    /// @deny('update', true)
-    authorId String @db.Uuid()
-    author Member @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    price Int
-    availableFrom DateTime @map("available_from") @db.Timestamptz(6) @default(now())
-    availableTo DateTime? @map("available_to") @db.Timestamptz(6)
-    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6) @ignore()
-    updatedAt DateTime @map("updated_at") @db.Timestamptz(6) @updatedAt()
-    removedAt DateTime? @map("removed_at") @db.Timestamptz(6)
-    ticket Ticket?
-    consumables Consumable[]
-    reservations ConsumableReservation[]
-    questions ItemQuestion[]
-    accessPolicies ShoppableAccessPolicy[]
+  id             String                  @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  title          String
+  titleEn        String?
+  description    String?
+  descriptionEn  String?
+  type           ShoppableType
+  authorId       String                  @db.Uuid()
+  author         Member                  @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  price          Int
+  availableFrom  DateTime                @default(now()) @map("available_from") @db.Timestamptz(6)
+  availableTo    DateTime?               @map("available_to") @db.Timestamptz(6)
+  createdAt      DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime                @updatedAt() @map("updated_at") @db.Timestamptz(6)
+  removedAt      DateTime?               @map("removed_at") @db.Timestamptz(6)
+  ticket         Ticket?
+  consumables    Consumable[]
+  reservations   ConsumableReservation[]
+  questions      ItemQuestion[]
+  accessPolicies ShoppableAccessPolicy[]
 
-    @@map("shoppable")
+  @@map("shoppable")
 }
 
-/// @@allow('create', has(auth().policies, 'webshop:create') && shoppable.authorId == auth().memberId)
-/// @@allow('update', auth().memberId == shoppable.authorId || has(auth().policies, 'webshop:manage'))
-/// @@allow('read', true)
-/// @@deny('read', shoppable.removedAt != null && !auth().memberId == shoppable.authorId || has(auth().policies, 'webshop:manage'))
-/// @@allow('delete', has(auth().policies, 'webshop:manage'))
 model Ticket {
-    id String @id() @db.Uuid()
-    shoppable Shoppable @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-    eventId String @db.Uuid()
-    event Event @relation(fields: [eventId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    stock Int @default(0)
-    maxAmountPerUser Int @default(1)
+  id               String    @id() @db.Uuid()
+  shoppable        Shoppable @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  eventId          String    @db.Uuid()
+  event            Event     @relation(fields: [eventId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  stock            Int       @default(0)
+  maxAmountPerUser Int       @default(1)
 
-    @@map("ticket")
+  @@map("ticket")
 }
 
-/// @@allow('create', hasSome(auth().policies, ['webshop:create', 'webshop:manage']) || shoppable.authorId == auth().memberId)
-/// @@allow('read', true)
-/// @@deny('read', shoppable.removedAt != null && !auth().memberId == shoppable.authorId || has(auth().policies, 'webshop:manage'))
-/// @@allow('update', auth().memberId == shoppable.authorId || has(auth().policies, 'webshop:manage'))
-/// @@allow('delete', auth().memberId == shoppable.authorId || has(auth().policies, 'webshop:manage'))
 model ItemQuestion {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    shoppableId String @db.Uuid()
-    shoppable Shoppable @relation(fields: [shoppableId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-    title String
-    titleEn String?
-    description String
-    descriptionEn String?
-    type String @db.VarChar(255)
-    forExternalsOnly Boolean @default(false)
-    removedAt DateTime?
-    options ItemQuestionOption[]
-    responses ItemQuestionResponse[]
+  id               String                 @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  shoppableId      String                 @db.Uuid()
+  shoppable        Shoppable              @relation(fields: [shoppableId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  title            String
+  titleEn          String?
+  description      String
+  descriptionEn    String?
+  type             String                 @db.VarChar(255)
+  forExternalsOnly Boolean                @default(false)
+  removedAt        DateTime?
+  options          ItemQuestionOption[]
+  responses        ItemQuestionResponse[]
 
-    @@map("item_question")
+  @@map("item_question")
 }
 
-/// @@allow('create', hasSome(auth().policies, ['webshop:create', 'webshop:manage']) || question.shoppable.authorId == auth().memberId)
-/// @@allow('read', true)
-/// @@deny('read', question.shoppable.removedAt != null && !auth().memberId == question.shoppable.authorId || has(auth().policies, 'webshop:manage'))
-/// @@allow('update', auth().memberId == question.shoppable.authorId || has(auth().policies, 'webshop:manage'))
-/// @@allow('delete', auth().memberId == question.shoppable.authorId || has(auth().policies, 'webshop:manage'))
 model ItemQuestionOption {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    questionId String @db.Uuid()
-    question ItemQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-    answer String
-    answerEn String?
-    extraPrice Int?
+  id         String       @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  questionId String       @db.Uuid()
+  question   ItemQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  answer     String
+  answerEn   String?
+  extraPrice Int?
 
-    @@map("item_question_option")
+  @@map("item_question_option")
 }
 
-/// @@allow('create', consumable.memberId == auth().memberId || auth().externalCode != null && consumable.externalCustomerCode == auth().externalCode)
-/// @@allow('read', consumable.memberId == auth().memberId || auth().externalCode != null && consumable.externalCustomerCode == auth().externalCode || question.shoppable.authorId == auth().memberId || hasSome(auth().policies, ['webshop:manage', 'webshop:read_purchases']))
-/// @@allow('update', consumable.purchasedAt == null && (auth().memberId == consumable.memberId || auth().externalCode != null))
-/// @@deny('delete', false)
 model ItemQuestionResponse {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    questionId String @db.Uuid()
-    question ItemQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-    consumableId String @db.Uuid()
-    consumable Consumable @relation(fields: [consumableId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-    answer String
-    extraPrice Int?
+  id           String       @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  questionId   String       @db.Uuid()
+  question     ItemQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  consumableId String       @db.Uuid()
+  consumable   Consumable   @relation(fields: [consumableId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  answer       String
+  extraPrice   Int?
 
-    @@map("item_question_response")
-    @@unique([questionId, consumableId], map: "item_question_response_question_id_consumable_id_unique")
+  @@unique([questionId, consumableId], map: "item_question_response_question_id_consumable_id_unique")
+  @@map("item_question_response")
 }
 
-/// @@allow('create', memberId == auth().memberId || auth().externalCode != null && externalCustomerCode == auth().externalCode)
-/// @@allow('read', true)
-/// @@deny('update', true)
-/// @@allow('delete', memberId == auth().memberId || auth().externalCode != null && externalCustomerCode == auth().externalCode)
-/// @@allow('delete', expiresAt != null && expiresAt < now())
-/// @@deny('delete', purchasedAt != null)
 model Consumable {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    shoppableId String @db.Uuid()
-    shoppable Shoppable @relation(fields: [shoppableId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    memberId String? @db.Uuid()
-    member Member? @relation(fields: [memberId], references: [id])
-    externalCustomerEmail String?
-    externalCustomerCode String?
-    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-    expiresAt DateTime? @map("expires_at") @db.Timestamptz(6)
-    purchasedAt DateTime? @map("purchased_at") @db.Timestamptz(6)
-    priceAtPurchase Int?
-    stripeIntentId String? @map("stripe_intent_id")
-    /// @allow('update', has(auth().policies, 'webshop:consume') && consumedAt == null || has(auth().policies, 'webshop:manage'), true)
-    consumedAt DateTime? @map("consumed_at") @db.Timestamptz(6)
-    questionResponses ItemQuestionResponse[]
+  id                    String                 @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  shoppableId           String                 @db.Uuid()
+  shoppable             Shoppable              @relation(fields: [shoppableId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  memberId              String?                @db.Uuid()
+  member                Member?                @relation(fields: [memberId], references: [id])
+  externalCustomerEmail String?
+  externalCustomerCode  String?
+  createdAt             DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  expiresAt             DateTime?              @map("expires_at") @db.Timestamptz(6)
+  purchasedAt           DateTime?              @map("purchased_at") @db.Timestamptz(6)
+  priceAtPurchase       Int?
+  stripeIntentId        String?                @map("stripe_intent_id")
+  consumedAt            DateTime?              @map("consumed_at") @db.Timestamptz(6)
+  questionResponses     ItemQuestionResponse[]
 
-    @@map("consumable")
+  @@map("consumable")
 }
 
-/// @@allow('create', memberId == auth().memberId || auth().externalCode != null && externalCustomerCode == auth().externalCode)
-/// @@allow('read', true)
-/// @@deny('update', true)
-/// @@allow('delete', memberId == auth().memberId || auth().externalCode != null && externalCustomerCode == auth().externalCode)
 model ConsumableReservation {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    shoppableId String @db.Uuid()
-    shoppable Shoppable @relation(fields: [shoppableId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    memberId String? @db.Uuid()
-    member Member? @relation(fields: [memberId], references: [id])
-    externalCustomerEmail String?
-    externalCustomerCode String?
-    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-    order Int?
+  id                    String    @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  shoppableId           String    @db.Uuid()
+  shoppable             Shoppable @relation(fields: [shoppableId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  memberId              String?   @db.Uuid()
+  member                Member?   @relation(fields: [memberId], references: [id])
+  externalCustomerEmail String?
+  externalCustomerCode  String?
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  order                 Int?
 
-    @@map("consumable_reservation")
+  @@map("consumable_reservation")
 }
 
-/// @@allow('create', hasSome(auth().policies, ['webshop:create', 'webshop:manage']) || auth().memberId == shoppable.authorId)
-/// @@allow('update', auth().memberId == shoppable.authorId || has(auth().policies, 'webshop:manage'))
-/// @@allow('read', true)
-/// @@allow('delete', auth().memberId == shoppable.authorId || has(auth().policies, 'webshop:manage'))
 model ShoppableAccessPolicy {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    shoppableId String @db.Uuid()
-    shoppable Shoppable @relation(fields: [shoppableId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-    role String?
-    studentId String? @map("student_id")
-    member Member? @relation(fields: [studentId], references: [studentId], onDelete: NoAction, onUpdate: NoAction, map: "access_policies_member_id_foreign")
-    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  id          String    @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+  shoppableId String    @db.Uuid()
+  shoppable   Shoppable @relation(fields: [shoppableId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  role        String?
+  studentId   String?   @map("student_id")
+  member      Member?   @relation(fields: [studentId], references: [studentId], onDelete: NoAction, onUpdate: NoAction, map: "access_policies_member_id_foreign")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
 
-    @@map("shoppable_access_policies")
+  @@map("shoppable_access_policies")
 }

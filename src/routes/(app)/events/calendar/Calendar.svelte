@@ -131,4 +131,4 @@
 <div
   class="min-w-0 flex-col break-words rounded-2xl border-0 bg-clip-border p-4 shadow-xl"
   bind:this={calendarEl}
-/>
+></div>

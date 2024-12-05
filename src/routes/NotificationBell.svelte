@@ -61,16 +61,16 @@
   >
     <slot>
       {#await notifications}
-        <span class="i-mdi-bell-outline" />
+        <span class="i-mdi-bell-outline"></span>
       {:then notifications}
         {@const unreadCount = notifications.filter(
           (data) => data.readAt == null,
         ).length}
         {#if unreadCount <= 0}
-          <span class="i-mdi-bell-outline" />
+          <span class="i-mdi-bell-outline"></span>
         {/if}
         {#if unreadCount > 0}
-          <span class="i-mdi-bell-ring-outline animate-bounce" />
+          <span class="i-mdi-bell-ring-outline animate-bounce"></span>
           <span
             class="absolute right-0 top-0 flex h-6 w-6 items-center justify-center rounded-box bg-red-600 text-center !text-sm"
             >{unreadCount}</span
@@ -89,7 +89,7 @@
       class="menu dropdown-content !fixed right-0 z-[1] max-h-[80svh] w-full flex-nowrap overflow-clip rounded-box bg-base-100 p-0 shadow sm:!absolute sm:w-[27rem]"
     >
       {#await notifications}
-        <span class="loading loading-lg" />
+        <span class="loading loading-lg"></span>
       {:then notifications}
         {#if notifications.length > 0}
           <div class="overflow-y-auto">
@@ -122,7 +122,7 @@
                 class="btn btn-ghost no-animation z-10 w-full rounded-none border-0 border-t border-gray-700 *:text-2xl"
               >
                 {m.navbar_bell_markAllAsRead()}
-                <span class="i-mdi-bell-check-outline" />
+                <span class="i-mdi-bell-check-outline"></span>
               </button>
             </form>
           {/if}
@@ -143,7 +143,7 @@
                 class="btn btn-ghost no-animation z-10 w-full rounded-none border-0 border-t border-gray-700 *:text-2xl"
               >
                 {m.navbar_bell_deleteAll()}
-                <span class="i-mdi-delete-outline" />
+                <span class="i-mdi-delete-outline"></span>
               </button>
             </form>
           {/if}

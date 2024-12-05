@@ -1,16 +1,30 @@
-<script lang="ts">
-  import { twMerge } from "tailwind-merge";
+<script lang="ts" module>
+  export interface LabeledAttributes {
+    class?: ClassNameValue;
+    label?: string | null;
+    explanation?: string | null;
+    error?: string | string[] | undefined;
+    fullWidth?: boolean;
+    invisibleText?: boolean;
+    required?: boolean;
+  }
+</script>
 
-  let clazz = "";
-  export { clazz as class };
-  export let label: string | null = null;
-  export let explanation: string | null = null;
-  export let error: string | string[] | undefined = undefined;
-  export let fullWidth = false;
-  export let invisibleText = false;
-  export let required: boolean | null = null;
-  let _for: string | undefined = undefined;
-  export { _for as for };
+<script lang="ts">
+  import { twMerge, type ClassNameValue } from "tailwind-merge";
+
+  let {
+    class: clazz = "",
+    label = null,
+    explanation = null,
+    error = undefined,
+    fullWidth = false,
+    invisibleText = false,
+    required = false,
+    for: _for = undefined,
+  }: {
+    for?: string | undefined;
+  } & LabeledAttributes = $props();
 </script>
 
 <label

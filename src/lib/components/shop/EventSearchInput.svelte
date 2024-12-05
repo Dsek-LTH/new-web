@@ -38,7 +38,7 @@
         ? 'input-primary'
         : ''}"
     >
-      <span class="i-mdi-search text-xl" />
+      <span class="i-mdi-search text-xl"></span>
       <input
         id="event"
         autocomplete="off"
@@ -62,7 +62,7 @@
         class="loading loading-spinner loading-md text-primary transition-opacity opacity-{isSearching
           ? '100'
           : '0'}"
-      />
+      ></span>
     </div>
   </Labeled>
 </EventSearch>

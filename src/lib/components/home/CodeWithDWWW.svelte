@@ -26,14 +26,14 @@
     <a class="btn btn-ghost btn-sm" href="https://github.com/Dsek-LTH/web"
       ><span
         class="i-mdi-github text-lg max-lg:text-secondary lg:text-primary xl:text-secondary"
-      /> Github</a
+      ></span> Github</a
     >
     <a
       class="btn btn-ghost btn-sm"
       href="https://github.com/Dsek-LTH/web/issues/new"
       ><span
         class="i-mdi-bug text-lg max-lg:text-secondary lg:text-primary xl:text-secondary"
-      />
+      ></span>
       {m.home_reportBug()}</a
     >
     <a
@@ -41,7 +41,7 @@
       href="https://github.com/Dsek-LTH/web/commits/main/"
       ><span
         class="i-mdi-history text-lg max-lg:text-secondary lg:text-primary xl:text-secondary"
-      />Commits: {commitCount}</a
+      ></span>Commits: {commitCount}</a
     >
   </div>
   <a

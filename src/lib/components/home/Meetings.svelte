@@ -6,7 +6,7 @@
 </script>
 
 <a class="pop-out flex gap-6 rounded-2xl bg-base-300 p-6" href="/documents">
-  <span class="i-mdi-gavel self-center text-2xl" />
+  <span class="i-mdi-gavel self-center text-2xl"></span>
 
   <article class="flex-1">
     <p>{m.home_meetingNext()}</p>

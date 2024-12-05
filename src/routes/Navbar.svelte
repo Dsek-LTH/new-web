@@ -30,10 +30,10 @@
         aria-label="open sidebar"
         class="btn btn-square btn-ghost"
       >
-        <span class="i-mdi-menu h-8 w-8 text-primary" />
+        <span class="i-mdi-menu h-8 w-8 text-primary"></span>
       </label>
     </div>
-    <div class="block flex-1 bg-red-500 xl:hidden" />
+    <div class="block flex-1 bg-red-500 xl:hidden"></div>
 
     <!-- Navbar content -->
     <div class="container hidden flex-1 xl:block">
@@ -42,7 +42,6 @@
           {#if route?.children?.length}
             <div class="dropdown dropdown-hover">
               <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-              <!-- svelte-ignore a11y-label-has-associated-control -->
               <label tabindex="0" class="btn btn-ghost">
                 <NavIcon icon={route.icon} />
                 {route.title}</label

@@ -86,36 +86,42 @@
         <th>Remove</th>
       </tr>
     </thead>
-    {#each data.settings as setting (setting.key)}
-      <tr>
-        <td>{setting.key}</td>
-        <td>{setting.value}</td>
-        <td>
-          <button
-            disabled={!isAuthorized(apiNames.ADMIN.SETTINGS.UPDATE, data.user)}
-            class="btn btn-ghost"
-            on:click={() => (editingSetting = setting)}
-          >
-            <span class="i-mdi-edit" />
-          </button>
-        </td>
-        <td>
-          <form method="POST" use:enhance action="?/remove">
-            <input type="hidden" name="key" value={setting.key} />
-            <LoadingButton
-              type="submit"
-              class="btn btn-error"
+    <tbody>
+      {#each data.settings as setting (setting.key)}
+        <tr>
+          <td>{setting.key}</td>
+          <td>{setting.value}</td>
+          <td>
+            <!-- svelte-ignore a11y_consider_explicit_label -->
+            <button
               disabled={!isAuthorized(
-                apiNames.ADMIN.SETTINGS.DELETE,
+                apiNames.ADMIN.SETTINGS.UPDATE,
                 data.user,
               )}
+              class="btn btn-ghost"
+              on:click={() => (editingSetting = setting)}
             >
-              <span class="i-mdi-delete" />
-            </LoadingButton>
-          </form>
-        </td>
-      </tr>
-    {/each}
+              <span class="i-mdi-edit"></span>
+            </button>
+          </td>
+          <td>
+            <form method="POST" use:enhance action="?/remove">
+              <input type="hidden" name="key" value={setting.key} />
+              <LoadingButton
+                type="submit"
+                class="btn btn-error"
+                disabled={!isAuthorized(
+                  apiNames.ADMIN.SETTINGS.DELETE,
+                  data.user,
+                )}
+              >
+                <span class="i-mdi-delete"></span>
+              </LoadingButton>
+            </form>
+          </td>
+        </tr>
+      {/each}
+    </tbody>
   </table>
 
   {#if data.nollning && isAuthorized(apiNames.ADMIN.SETTINGS.UPDATE, data.user)}

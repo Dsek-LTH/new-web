@@ -41,7 +41,7 @@
       placeholder="Bio"
       bind:value={$form.bio}
       {...$constraints.bio}
-    />
+    ></textarea>
   </form>
   <div>
     <h2 class="py-3 text-xl italic">{m.members_preview()}</h2>

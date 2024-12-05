@@ -4,16 +4,22 @@
   import MonetaryInput from "$lib/components/shop/MonetaryInput.svelte";
   import type { TicketSchema } from "$lib/utils/shop/types";
   import { formFieldProxy, type SuperForm } from "sveltekit-superforms/client";
-  export let superform: SuperForm<TicketSchema>;
-  export let field: `questions[${number}].options[${number}]`;
+
+  let {
+    superform,
+    field,
+    onRemove,
+  }: {
+    superform: SuperForm<TicketSchema>;
+    field: `questions[${number}].options[${number}]`;
+    onRemove: (() => void) | undefined;
+  } = $props();
   const {
     value: priceValue,
     errors: priceErrors,
     constraints: priceConstraints,
   } = formFieldProxy(superform, `${field}.extraPrice`);
-  let extraCost = !!$priceValue;
-
-  export let onRemove: (() => void) | undefined;
+  let extraCost = $state(!!$priceValue);
 </script>
 
 <div class="relative rounded-lg border-[1px] p-2">
@@ -39,31 +45,33 @@
           {...$priceConstraints}
         />
       </Labeled>
+      <!-- svelte-ignore a11y_consider_explicit_label -->
       <button
         class="btn btn-error tooltip"
         data-tip={"Ta bort extrakostnad"}
         type="button"
-        on:click={() => {
+        onclick={() => {
           $priceValue = null;
           extraCost = false;
-        }}><span class="i-mdi-trash" /></button
+        }}><span class="i-mdi-trash"></span></button
       >
     </div>
   {:else}
     <button
       class="btn self-start"
       type="button"
-      on:click={() => {
+      onclick={() => {
         $priceValue = 100;
         extraCost = true;
-      }}><span class="i-mdi-plus" /> Extrakostnad</button
+      }}><span class="i-mdi-plus"></span> Extrakostnad</button
     >
   {/if}
+  <!-- svelte-ignore a11y_consider_explicit_label -->
   <button
     class="btn btn-circle btn-error btn-sm absolute -right-4 -top-4 z-10 transition-all"
     class:opacity-0={!onRemove}
-    on:click={onRemove}
+    onclick={onRemove}
     type="button"
-    disabled={!onRemove}><span class="i-mdi-remove" /></button
+    disabled={!onRemove}><span class="i-mdi-remove"></span></button
   >
 </div>

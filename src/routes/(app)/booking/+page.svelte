@@ -41,7 +41,7 @@
           <th>{m.booking_until()}</th>
           <th>{m.booking_event()}</th>
           <th>{m.booking_status()}</th>
-          <th />
+          <th></th>
         </tr>
       </thead>
 

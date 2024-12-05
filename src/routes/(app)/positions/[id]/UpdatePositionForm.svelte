@@ -30,7 +30,7 @@
       rows="3"
       value={$form.description ?? ""}
       {...$constraints.description}
-    />
+    ></textarea>
     {#if $errors.description}
       <p class="text-error">{$errors.description}</p>
     {/if}

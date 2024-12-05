@@ -16,7 +16,7 @@
     <thead>
       <tr class="bg-base-200">
         <th>{m.admin_doors_door()}</th>
-        <th />
+        <th></th>
       </tr>
     </thead>
     <tbody>

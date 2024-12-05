@@ -42,7 +42,7 @@
           aria-label="open sidebar"
           class="btn btn-square btn-ghost"
         >
-          <span class="i-mdi-menu text-4xl" />
+          <span class="i-mdi-menu text-4xl"></span>
         </label>
       </div>
       <ul
@@ -55,6 +55,7 @@
         {/each}
       </ul>
       <div class="flex flex-1 items-stretch justify-end gap-4">
+        <!-- svelte-ignore a11y_consider_explicit_label -->
         <a
           class="neo-brutal-btn aspect-square"
           href={i18n.route($page.url.pathname)}
@@ -65,12 +66,12 @@
             class:i-flag-gb-4x3={languageTag() !== "sv"}
             class:i-flag-se-4x3={languageTag() === "sv"}
             class="h-8 w-8"
-          />
+          ></span>
         </a>
 
         <a href="/" class="neo-brutal-btn">
           dsek.se
-          <span class="i-mdi-arrow-right ml-2 h-8 w-8" />
+          <span class="i-mdi-arrow-right ml-2 h-8 w-8"></span>
         </a>
       </div>
     </nav>
@@ -80,11 +81,8 @@
   </div>
   <!-- Drawer -->
   <nav class="drawer-side">
-    <label
-      for="my-drawer-3"
-      aria-label="close sidebar"
-      class="drawer-overlay"
-    />
+    <label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"
+    ></label>
     <ul
       class="menu menu-lg min-h-full w-80 bg-base-200 p-4 text-2xl font-semibold"
     >

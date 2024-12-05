@@ -73,7 +73,7 @@
     <div class="flex flex-col gap-5">
       <div class="w-fit">
         <a class="btn" href="/booking/admin">
-          <span class="i-mdi-arrow-expand-left" />
+          <span class="i-mdi-arrow-expand-left"></span>
           {m.booking_goBack()}
         </a>
       </div>
@@ -108,7 +108,7 @@
 
   {#if showBoardRooomWarning}
     <div role="alert" class="alert alert-warning">
-      <span class="i-mdi-alert-outline size-6" />
+      <span class="i-mdi-alert-outline size-6"></span>
       <span>{m.booking_boardRoomWarning()}</span>
     </div>
   {/if}
@@ -164,7 +164,7 @@
         aria-label={m.booking_accept()}
       >
         {m.booking_accept()}
-        <span class="i-mdi-check" />
+        <span class="i-mdi-check"></span>
       </button>
       <button
         formaction="?/reject"
@@ -173,7 +173,7 @@
         aria-label={m.booking_deny()}
       >
         {m.booking_deny()}
-        <span class="i-mdi-close" />
+        <span class="i-mdi-close"></span>
       </button>
     </div>
   {/if}

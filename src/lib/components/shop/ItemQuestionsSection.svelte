@@ -35,7 +35,7 @@
       ];
     }}
   >
-    <span class="i-mdi-plus" /> Lägg till fråga
+    <span class="i-mdi-plus"></span> Lägg till fråga
   </button>
 
   {#if $errors}

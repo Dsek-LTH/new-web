@@ -9,5 +9,5 @@
 {#if icon === "dsek-icon"}
   <DsekLogo class={twMerge("size-6 text-primary", clazz)} />
 {:else}
-  <span class={twMerge(`${icon} size-6 text-primary`, clazz)} />
+  <span class={twMerge(`${icon} size-6 text-primary`, clazz)}></span>
 {/if}

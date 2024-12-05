@@ -62,7 +62,7 @@
           class="textarea textarea-bordered h-80 hover:border-base-content"
           bind:value={$form.lyrics}
           {...$constraints.lyrics}
-        />
+        ></textarea>
       </Labeled>
       <button class="btn btn-primary mt-4" type="submit"
         >{m.songbook_create()}</button

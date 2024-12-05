@@ -17,7 +17,7 @@
       target="_blank">{m.nollning_wikia_studentHealth_wellBeing_contact()}</a
     >
   </section>
-  <div class="divider" />
+  <div class="divider"></div>
   <section>
     <h3 class="page-title">
       {m.nollning_wikia_studentHealth_kurator_header()}
@@ -49,7 +49,7 @@
       ><br />
     </p>
   </section>
-  <div class="divider" />
+  <div class="divider"></div>
   <section>
     <h3 class="page-title">
       {m.nollning_wikia_studentHealth_studentHealth_header()}
@@ -67,7 +67,7 @@
       target="_blank">{m.website()}</a
     >
   </section>
-  <div class="divider" />
+  <div class="divider"></div>
   <section>
     <h3 class="page-title">
       {m.nollning_wikia_studentHealth_youngAdults_title()}
@@ -85,7 +85,7 @@
       target="_blank">{m.website()}</a
     >
   </section>
-  <div class="divider" />
+  <div class="divider"></div>
   <section>
     <h3 class="page-title">{m.nollning_wikia_studentHealth_priests_title()}</h3>
     <p class="nolla-prose">

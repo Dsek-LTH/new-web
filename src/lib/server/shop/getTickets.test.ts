@@ -45,9 +45,10 @@ describe("Get tickets as logged in user", async () => {
   const users = await addMockUsers(prisma, SUITE_PREFIX);
   const prismaWithAccess = enhance(prisma, {
     user: {
-      studentId: users.customerMember.studentId,
+      studentId: users.customerMember.studentId ?? undefined,
       memberId: users.customerMember.id,
       policies: [apiNames.EVENT.READ],
+      roles: [],
     },
   });
   afterAll(async () => {
@@ -62,9 +63,10 @@ describe("Get tickets as anonymous user", async () => {
   const users = await addMockUsers(prisma, SUITE_PREFIX);
   const prismaWithAccess = enhance(prisma, {
     user: {
-      studentId: users.customerMember.studentId,
+      studentId: users.customerMember.studentId ?? undefined,
       memberId: users.customerMember.id,
       policies: [apiNames.EVENT.READ],
+      roles: [],
     },
   });
   afterAll(async () => {

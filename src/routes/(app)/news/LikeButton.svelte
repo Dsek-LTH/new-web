@@ -31,6 +31,7 @@
     class="m-4 hover:opacity-50 hover:transition-opacity"
     data-tip={m.news_logInToLike()}
   >
+    <!-- svelte-ignore a11y_consider_explicit_label -->
     <button disabled={!authorized} type="submit">
       <label class="swap">
         <input type="checkbox" disabled={!authorized} checked={isLiked} />

@@ -145,6 +145,7 @@
       {:else}
         <input type="hidden" name="notificationId" value={notification.id} />
       {/if}
+      <!-- svelte-ignore a11y_consider_explicit_label -->
       <button class="btn btn-ghost -mr-2 rounded-none !px-2 *:text-2xl">
         <span class="i-mdi-delete-outline mx-0 opacity-50"></span>
       </button>

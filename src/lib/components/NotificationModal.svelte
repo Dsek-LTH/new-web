@@ -21,7 +21,7 @@
     <ul class="-mx-6 flex-nowrap overflow-y-auto">
       {#if notifications !== null}
         {#await notifications}
-          <span class="loading loading-lg" />
+          <span class="loading loading-lg"></span>
         {:then notifications}
           {#if notifications.length > 0}
             {#each notifications as notification (notification.id)}

@@ -45,21 +45,21 @@
       class="-mt-2 flex flex-wrap items-center gap-2 text-sm text-base-content/60 *:flex *:items-center *:gap-1"
     >
       <p>
-        <span class="i-mdi-calendar" />
+        <span class="i-mdi-calendar"></span>
         <a href={eventLink(event)} class="link-hover">
           {event.title}
         </a>
       </p>
 
       <p>
-        <span class="i-mdi-clock" />{dayjs(event.startDatetime).format(
+        <span class="i-mdi-clock"></span>{dayjs(event.startDatetime).format(
           "dddd Do MMM",
         )}
       </p>
 
       {#if event.location}
         <p>
-          <span class="i-mdi-map-marker" />
+          <span class="i-mdi-map-marker"></span>
           <a
             href="https://maps.google.com/?q={event.location}"
             target="_blank"

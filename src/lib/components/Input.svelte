@@ -7,7 +7,7 @@
   export let placeholder: string | null = label;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- any is needed for generic use
   export let value: any | null = null;
-  export let required: boolean | null = null;
+  export let required = false;
   export let error: string | string[] | undefined = undefined;
   export let explanation: string | null = null;
   export let textarea = false;
@@ -28,7 +28,7 @@
       {placeholder}
       {required}
       {...$$restProps}
-    />
+    ></textarea>
   {:else}
     <input
       id={name}

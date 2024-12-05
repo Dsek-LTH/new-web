@@ -38,5 +38,5 @@
 
 <h1 class="text-xl font-semibold">{data.message}</h1>
 {#if interval}
-  <span class="loading size-8" />
+  <span class="loading size-8"></span>
 {/if}

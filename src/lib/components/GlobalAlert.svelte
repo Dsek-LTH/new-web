@@ -20,7 +20,7 @@
 </script>
 
 <div role="alert" class={`alert alert-${severity} rounded-none`}>
-  <span class={`${icon} text-xl`} />
+  <span class={`${icon} text-xl`}></span>
   <span class="font-bold prose-a:link">
     <!-- eslint-disable-next-line svelte/no-at-html-tags -- Sanitized client-side -->
     {@html marked(DOMPurify.sanitize(message))}

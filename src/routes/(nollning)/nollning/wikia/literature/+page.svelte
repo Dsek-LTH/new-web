@@ -12,7 +12,7 @@
     <a
       class="btn-primary-dark btn"
       href="https://www.facebook.com/groups/1526600060932798/"
-      target="_blank">Facebook<span class="i-mdi-arrow-right" /></a
+      target="_blank">Facebook<span class="i-mdi-arrow-right"></span></a
     >
   </section>
   <img class="w-full" alt="Map of campus" src={kfs} />

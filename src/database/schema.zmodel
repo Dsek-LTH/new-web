@@ -1,7 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  binaryTargets   = ["native", "darwin-arm64"]
-  previewFeatures = ["fullTextSearch"]
+  previewFeatures = ["fullTextSearchPostgres"]
 }
 
 datasource db {
@@ -932,7 +931,7 @@ model Shoppable {
   availableTo    DateTime?               @map("available_to") @db.Timestamptz(6)
 
 
-  createdAt      DateTime                @default(now()) @map("created_at") @db.Timestamptz(6) @ignore()
+  createdAt      DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt      DateTime                @map("updated_at") @db.Timestamptz(6) @updatedAt()
   removedAt      DateTime?               @map("removed_at") @db.Timestamptz(6)
 

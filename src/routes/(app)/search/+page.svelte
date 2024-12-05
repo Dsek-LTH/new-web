@@ -5,7 +5,7 @@
 
 <form method="POST" class="mx-auto mt-8 max-w-md">
   <label class="input input-bordered mb-2 flex w-full items-center gap-2">
-    <span class="i-mdi-magnify size-6" />
+    <span class="i-mdi-magnify size-6"></span>
     <!-- svelte-ignore a11y-autofocus -->
     <input
       autofocus

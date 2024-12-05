@@ -26,12 +26,13 @@
   style="padding-top: {topInsets + 8}px;"
 >
   <div class="w-16">
+    <!-- svelte-ignore a11y_consider_explicit_label -->
     <button
       on:click={canGoBack ? () => window.history.back() : undefined}
       class:opacity-0={!canGoBack}
       class="-m-4 p-4"
     >
-      <span class="i-mdi-chevron-left relative top-0.5 size-8" />
+      <span class="i-mdi-chevron-left relative top-0.5 size-8"></span>
     </button>
   </div>
 

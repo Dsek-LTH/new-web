@@ -12,7 +12,7 @@
       {m.nollning_wikia_guild_body()}
     </p>
     <a class="btn-primary-dark btn" href="/"
-      >dsek.se <span class="i-mdi-arrow-right" /></a
+      >dsek.se <span class="i-mdi-arrow-right"></span></a
     >
   </section>
   <br /><br />
@@ -83,7 +83,7 @@
       {m.landing_dchip_description()}
     </p>
     <a href="https://dchip.dsek.se" target="_blank" class="btn-primary-dark btn"
-      >{m.website()} <span class="i-mdi-arrow-right" /></a
+      >{m.website()} <span class="i-mdi-arrow-right"></span></a
     >
   </section>
 </div>

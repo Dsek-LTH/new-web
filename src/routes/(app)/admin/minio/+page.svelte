@@ -78,6 +78,7 @@
         }}
       >
         <input type="hidden" value={file.id} name="id" />
+        <!-- svelte-ignore a11y_consider_explicit_label -->
         <button
           class="btn btn-error join-item"
           disabled={!isAuthorized(
@@ -85,7 +86,7 @@
             data.user,
           )}
         >
-          <span class="i-mdi-delete" />
+          <span class="i-mdi-delete"></span>
         </button>
       </form>
     </li>

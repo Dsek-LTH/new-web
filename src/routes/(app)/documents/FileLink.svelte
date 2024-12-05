@@ -18,7 +18,7 @@
     target="_blank"
     ><span
       class="i-mdi-file-document-outline align-text-top text-xl text-primary"
-    />
+    ></span>
     {fileName}
   </a>
 </div>

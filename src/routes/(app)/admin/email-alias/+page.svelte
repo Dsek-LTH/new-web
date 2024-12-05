@@ -240,7 +240,7 @@
         <tr class="bg-base-200">
           <th>{m.admin_emailalias_emailAddress()}</th>
           <th>{m.admin_emailalias_positionID()}</th>
-          <th />
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -278,7 +278,7 @@
         <tr class="bg-base-200">
           <th>{m.admin_emailalias_emailAddress()}</th>
           <th>{m.admin_emailalias_studentIDOrUsername()}</th>
-          <th />
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -316,7 +316,7 @@
         <tr class="bg-base-200">
           <th>{m.admin_emailalias_emailAddress()}</th>
           <th>{m.admin_emailalias_targetAddress()}</th>
-          <th />
+          <th></th>
         </tr>
       </thead>
       <tbody>

@@ -21,14 +21,14 @@
     class="grid grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2 [&_b]:inline-block [&_b]:font-semibold [&_i]:mt-0 [&_i]:size-6 [&_li]:flex [&_li]:gap-2 [&_p]:mt-0 [&_p]:font-light"
   >
     <li>
-      <i class="i-mdi-bike" />
+      <i class="i-mdi-bike"></i>
       <div>
         <b>{@html m.nolla_packing_bike()}</b>
         <p class="nolla-prose">{@html m.nolla_packing_bike_description()}</p>
       </div>
     </li>
     <li>
-      <i class="i-mdi-shoe-sneaker" />
+      <i class="i-mdi-shoe-sneaker"></i>
       <div>
         <b>{@html m.nolla_packing_robust_clothing()}</b>
         <p class="nolla-prose">
@@ -37,7 +37,7 @@
       </div>
     </li>
     <li>
-      <i class="i-mdi-party-popper" />
+      <i class="i-mdi-party-popper"></i>
       <div>
         <b>{@html m.nolla_packing_theme_outfits()}</b>
         <p class="nolla-prose">
@@ -46,7 +46,7 @@
       </div>
     </li>
     <li>
-      <i class="i-mdi-tie" />
+      <i class="i-mdi-tie"></i>
       <div>
         <b>{@html m.nolla_packing_fancy_clothing()}</b>
         <p class="nolla-prose">
@@ -55,7 +55,7 @@
       </div>
     </li>
     <li>
-      <i class="i-mdi-scissors" />
+      <i class="i-mdi-scissors"></i>
       <div>
         <b>{@html m.nolla_packing_needle()}</b>
         <p class="nolla-prose">
@@ -64,7 +64,7 @@
       </div>
     </li>
     <li>
-      <i class="i-mdi-money" />
+      <i class="i-mdi-money"></i>
       <div>
         <b>{@html m.nolla_packing_money()}</b>
         <p class="nolla-prose">
@@ -73,7 +73,7 @@
       </div>
     </li>
     <li>
-      <i class="i-mdi-face-happy" />
+      <i class="i-mdi-face-happy"></i>
       <div>
         <b>{@html m.nolla_packing_happy_mood()}</b>
         <p class="nolla-prose">:)</p>

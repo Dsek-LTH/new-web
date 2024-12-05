@@ -34,6 +34,6 @@
     class="absolute inset-0 flex items-center justify-center transition-all"
     class:opacity-0={!isLoading}
   >
-    <span class="loading" />
+    <span class="loading"></span>
   </div>
 </button>

@@ -49,7 +49,7 @@
       class="btn"
       on:click={() => ($availableTo = $availableFrom)}
     >
-      <span class="i-mdi-plus text-xl" />
+      <span class="i-mdi-plus text-xl"></span>
       Lägg till sluttid
     </button>
   {/if}

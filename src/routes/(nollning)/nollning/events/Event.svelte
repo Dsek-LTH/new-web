@@ -63,8 +63,9 @@
       </a>
     {/if}
     {#if isAuthorized(apiNames.EVENT.UPDATE, $page.data.user)}
+      <!-- svelte-ignore a11y_consider_explicit_label -->
       <a href="/events/{event.slug}" class="btn btn-secondary mt-8 self-start">
-        <span class="i-mdi-edit" />
+        <span class="i-mdi-edit"></span>
       </a>
     {/if}
   </div>

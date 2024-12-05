@@ -21,6 +21,7 @@
 <SetPageTitle title={event.title} />
 
 <Event {event}>
+  <!-- svelte-ignore a11y_consider_explicit_label -->
   <div slot="actions" class="flex flex-row">
     {#if data.canEdit}
       <a
@@ -28,11 +29,11 @@
         class="btn btn-square btn-ghost btn-md"
         title={m.events_edit()}
       >
-        <span class="i-mdi-edit text-xl" />
+        <span class="i-mdi-edit text-xl"></span>
       </a>
     {/if}
     {#if data.canDelete}
-      <form method="POST" action="?/removeEvent" use:enhance>
+      <form method="POST" action="?/removeEvent" id="removeEvent" use:enhance>
         <button
           type={submitString}
           class="btn btn-square btn-ghost btn-md"
@@ -43,74 +44,8 @@
             }
           }}
         >
-          <span class="i-mdi-delete text-xl" />
+          <span class="i-mdi-delete text-xl"></span>
         </button>
-        <dialog class="modal" bind:this={modal}>
-          <div class="modal-box">
-            <h3 class="text-lg font-bold">{m.events_thisIsRecurring()}</h3>
-            <div class="py-4">
-              <div class="form-control">
-                <label class="label cursor-pointer">
-                  <span class="label-text">
-                    <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                    {@html m.events_deleteThisEvent()}
-                  </span>
-                  <input
-                    type="radio"
-                    name="removeType"
-                    class="radio"
-                    bind:group={$form.removeType}
-                    value={"THIS"}
-                  />
-                </label>
-              </div>
-              <div class="form-control">
-                <label class="label cursor-pointer">
-                  <span class="label-text">
-                    <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                    {@html m.events_deleteThisAndFutureEvents()}
-                  </span>
-                  <input
-                    type="radio"
-                    name="removeType"
-                    class="radio"
-                    bind:group={$form.removeType}
-                    value={"FUTURE"}
-                  />
-                </label>
-              </div>
-              <div class="form-control">
-                <label class="label cursor-pointer">
-                  <span class="label-text">
-                    <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                    {@html m.events_deleteAllEvents()}
-                  </span>
-                  <input
-                    type="radio"
-                    name="removeType"
-                    class="radio"
-                    bind:group={$form.removeType}
-                    value={"ALL"}
-                  />
-                </label>
-              </div>
-            </div>
-            <div class="modal-action">
-              <button
-                class="btn btn-error"
-                type="submit"
-                on:click={() => {
-                  modal.close();
-                }}
-              >
-                {m.events_delete()}
-              </button>
-            </div>
-          </div>
-          <form method="dialog" class="modal-backdrop">
-            <button>close</button>
-          </form>
-        </dialog>
       </form>
     {/if}
   </div>
@@ -143,3 +78,71 @@
     </div>
   </div>
 </Event>
+
+<dialog class="modal" bind:this={modal}>
+  <div class="modal-box">
+    <h3 class="text-lg font-bold">{m.events_thisIsRecurring()}</h3>
+    <div class="py-4">
+      <div class="form-control">
+        <label class="label cursor-pointer">
+          <span class="label-text">
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+            {@html m.events_deleteThisEvent()}
+          </span>
+          <input
+            type="radio"
+            name="removeType"
+            class="radio"
+            bind:group={$form.removeType}
+            value={"THIS"}
+          />
+        </label>
+      </div>
+      <div class="form-control">
+        <label class="label cursor-pointer">
+          <span class="label-text">
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+            {@html m.events_deleteThisAndFutureEvents()}
+          </span>
+          <input
+            type="radio"
+            name="removeType"
+            class="radio"
+            bind:group={$form.removeType}
+            value={"FUTURE"}
+          />
+        </label>
+      </div>
+      <div class="form-control">
+        <label class="label cursor-pointer">
+          <span class="label-text">
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+            {@html m.events_deleteAllEvents()}
+          </span>
+          <input
+            type="radio"
+            name="removeType"
+            class="radio"
+            bind:group={$form.removeType}
+            value={"ALL"}
+          />
+        </label>
+      </div>
+    </div>
+    <div class="modal-action">
+      <button
+        class="btn btn-error"
+        type="submit"
+        form="removeEvent"
+        on:click={() => {
+          modal.close();
+        }}
+      >
+        {m.events_delete()}
+      </button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>

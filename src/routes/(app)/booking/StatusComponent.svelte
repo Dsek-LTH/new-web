@@ -36,15 +36,15 @@
 <div class={twMerge("flex gap-1", clazz)}>
   {#if bookingRequest.status === "ACCEPTED"}
     <div class="badge badge-success">
-      <span class="i-mdi-check-circle mr-1" />{m.booking_accepted()}
+      <span class="i-mdi-check-circle mr-1"></span>{m.booking_accepted()}
     </div>
   {:else if bookingRequest.status === "DENIED"}
     <div class="badge badge-error">
-      <span class="i-mdi-denied mr-1" />{m.booking_denied()}
+      <span class="i-mdi-denied mr-1"></span>{m.booking_denied()}
     </div>
   {:else if bookingRequest.status === "PENDING"}
     <div class="badge badge-info">
-      <span class="i-mdi-hourglass mr-1" />{m.booking_pending()}
+      <span class="i-mdi-hourglass mr-1"></span>{m.booking_pending()}
     </div>
   {/if}
 
@@ -61,7 +61,7 @@
           bookables: `${conflictingBookables}`,
         })}
       >
-        <span class="i-mdi-info mr-1" />{m.booking_conflict()}
+        <span class="i-mdi-info mr-1"></span>{m.booking_conflict()}
       </div>
     </div>
   {/if}

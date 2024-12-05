@@ -9,7 +9,7 @@
 <SetPageTitle title={m.events_calendar()} />
 
 <a class="btn" href="/events">
-  <span class="i-mdi-format-list-bulleted" />
+  <span class="i-mdi-format-list-bulleted"></span>
   {m.events_calendar_list()}
 </a>
 <Calendar events={data.events} />

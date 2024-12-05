@@ -17,7 +17,7 @@
     <thead>
       <tr class="bg-base-200">
         <th>{m.admin_access_policyCode()}</th>
-        <th />
+        <th></th>
       </tr>
     </thead>
     <tbody>

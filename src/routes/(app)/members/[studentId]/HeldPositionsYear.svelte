@@ -36,6 +36,9 @@
               </span>
               {#if mandate.phadderIn}
                 {@const group = mandate.phadderIn}
+                <!-- TODO: FIX when you actually can debug this -->
+                <!-- eslint-disable-next-line svelte/valid-compile -->
+                <!-- svelte-ignore node_invalid_placement_ssr -->
                 <a
                   href="/committees/nollu?year={new Date(
                     mandate.startDate,

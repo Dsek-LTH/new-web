@@ -1,5 +1,5 @@
 diff --git a/src/stringify.js b/src/stringify.js
-index 642c6601a1545b748ee0baa804ea90f7b0995667..11c45b79f5e7b2e58995e69d9b8f00d454683115 100644
+index df291fdf1a10d076dae1cb2dcdb717b2c9fd042f..78af3d852e64e7f1a1e1b31062bdab6217d01cf6 100644
 --- a/src/stringify.js
 +++ b/src/stringify.js
 @@ -1,6 +1,5 @@
@@ -9,7 +9,7 @@ index 642c6601a1545b748ee0baa804ea90f7b0995667..11c45b79f5e7b2e58995e69d9b8f00d4
  	get_type,
  	is_plain_object,
  	is_primitive,
-@@ -144,13 +143,6 @@ export function stringify(value, reducers) {
+@@ -175,13 +174,6 @@ export function stringify(value, reducers) {
  						);
  					}
  
@@ -24,7 +24,7 @@ index 642c6601a1545b748ee0baa804ea90f7b0995667..11c45b79f5e7b2e58995e69d9b8f00d4
  						str = '["null"';
  						for (const key in thing) {
 diff --git a/src/uneval.js b/src/uneval.js
-index 82535be7680c675de3f01c209b5728c7064be995..a5a94ce7caf3cdcb4dd62c1939cc1f43ab0a3d2e 100644
+index ce3ef34aee0ed12405c8b72d0dbee13cb02f8825..dbde0b82758e8846f40be687081aca5456b8316e 100644
 --- a/src/uneval.js
 +++ b/src/uneval.js
 @@ -1,6 +1,5 @@
@@ -34,7 +34,7 @@ index 82535be7680c675de3f01c209b5728c7064be995..a5a94ce7caf3cdcb4dd62c1939cc1f43
  	escaped,
  	get_type,
  	is_plain_object,
-@@ -90,13 +89,6 @@ export function uneval(value, replacer) {
+@@ -107,13 +106,6 @@ export function uneval(value, replacer) {
  						);
  					}
  
@@ -46,5 +46,5 @@ index 82535be7680c675de3f01c209b5728c7064be995..a5a94ce7caf3cdcb4dd62c1939cc1f43
 -					}
 -
  					for (const key in thing) {
- 						keys.push(`.${key}`);
+ 						keys.push(stringify_key(key));
  						walk(thing[key]);

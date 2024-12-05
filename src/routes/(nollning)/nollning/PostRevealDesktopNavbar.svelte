@@ -29,7 +29,7 @@
         aria-label="open sidebar"
         class="btn btn-circle aspect-square size-10 bg-base-200 !p-0 lg:hidden"
       >
-        <span class="i-mdi-menu size-7" />
+        <span class="i-mdi-menu size-7"></span>
       </label>
       <div class="container relative mx-auto">
         <ul

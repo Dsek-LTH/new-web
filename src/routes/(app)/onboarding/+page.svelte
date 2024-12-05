@@ -34,7 +34,7 @@
 
 <div
   class="hero-image min-h-screen bg-cover bg-center"
-  style:--url="url({getFileUrl("minio/photos/public/assets/hero.jpg")})"
+  style:--url="url({getFileUrl('minio/photos/public/assets/hero.jpg')})"
 >
   <div class="min-h-screen bg-cover py-16 md:bg-transparent">
     <div

@@ -25,7 +25,7 @@
         <th>{m.news_tags_name()}</th>
         <th>{m.news_tags_name()} (EN)</th>
         <th>{m.news_tags_color()}</th>
-        <th />
+        <th></th>
       </tr>
     </thead>
     <tbody>

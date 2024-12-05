@@ -25,7 +25,7 @@
         class="size-2 rounded-full"
         class:bg-base-content={i === index}
         class:bg-base-200={i !== index}
-      />
+      ></div>
     {/each}
   </div>
   <figure
@@ -39,7 +39,7 @@
       {#if index > 0}
         <a href="#{prefix}{index - 1}" class=" p-6 px-4">❮</a>
       {:else}
-        <div />
+        <div></div>
       {/if}
       {#if index < max - 1}
         <a href="#{prefix}{index + 1}" class="p-6 px-4">❯</a>

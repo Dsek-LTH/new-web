@@ -290,7 +290,7 @@
       ],
       "uniqueConstraints": [
         {
-          "name": "_article_likes_AB_unique",
+          "name": "_article_likes_AB_pkey",
           "fields": [
             "A",
             "B"
@@ -371,7 +371,7 @@
       ],
       "uniqueConstraints": [
         {
-          "name": "_article_tags_AB_unique",
+          "name": "_article_tags_AB_pkey",
           "fields": [
             "A",
             "B"
@@ -452,7 +452,7 @@
       ],
       "uniqueConstraints": [
         {
-          "name": "_booking_requests_bookables_AB_unique",
+          "name": "_booking_requests_bookables_AB_pkey",
           "fields": [
             "A",
             "B"
@@ -533,7 +533,7 @@
       ],
       "uniqueConstraints": [
         {
-          "name": "_event_going_AB_unique",
+          "name": "_event_going_AB_pkey",
           "fields": [
             "A",
             "B"
@@ -614,7 +614,7 @@
       ],
       "uniqueConstraints": [
         {
-          "name": "_event_interested_AB_unique",
+          "name": "_event_interested_AB_pkey",
           "fields": [
             "A",
             "B"
@@ -695,7 +695,7 @@
       ],
       "uniqueConstraints": [
         {
-          "name": "_event_tags_AB_unique",
+          "name": "_event_tags_AB_pkey",
           "fields": [
             "A",
             "B"
@@ -776,7 +776,7 @@
       ],
       "uniqueConstraints": [
         {
-          "name": "_member_tag_subscriptions_AB_unique",
+          "name": "_member_tag_subscriptions_AB_pkey",
           "fields": [
             "A",
             "B"

@@ -40,12 +40,13 @@
           ><ExpiresAtTimer expiresAt={inspectedItem.expiresAt} /></span
         >
       </h1>
+      <!-- svelte-ignore a11y_consider_explicit_label -->
       <button
         type="button"
         class="btn btn-circle btn-ghost btn-lg"
         on:click={onClose}
       >
-        <span class="i-mdi-close" />
+        <span class="i-mdi-close"></span>
       </button>
     </div>
     <ul class="divide-y-[1px] divide-base-content/20">
@@ -63,6 +64,7 @@
               </Price>)
             {/if}
           </span>
+          <!-- svelte-ignore a11y_consider_explicit_label -->
           <button
             class="btn btn-square btn-sm ml-2 inline-block"
             on:click={() =>
@@ -71,7 +73,7 @@
                 expiresAt: inspectedItem.expiresAt,
               })}
           >
-            <span class="i-mdi-edit" />
+            <span class="i-mdi-edit"></span>
           </button>
         </li>
       {/each}

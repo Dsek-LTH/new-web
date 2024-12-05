@@ -13,6 +13,7 @@
   });
 </script>
 
+<!-- svelte-ignore a11y_consider_explicit_label -->
 <button
   on:click={() => {
     deleteModal?.showModal();
@@ -38,6 +39,7 @@
     </div>
   </div>
   <form method="dialog" class="modal-backdrop">
+    <!-- svelte-ignore a11y_consider_explicit_label -->
     <button></button>
   </form>
 </dialog>

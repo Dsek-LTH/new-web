@@ -22,9 +22,10 @@
   <div class="card-body">
     <h2 class="card-title">
       {#if position.boardMember}
+        <!-- svelte-ignore a11y_consider_explicit_label -->
         <a href="/board" class="shrink-0">
           <div class="tooltip" data-tip={m.committees_boardMember()}>
-            <span class="i-mdi-account-tie" />
+            <span class="i-mdi-account-tie"></span>
           </div>
         </a>
       {/if}

@@ -31,7 +31,7 @@
     {#if ticket.description}
       <div
         class="i-mdi-question-mark-circle absolute top-1/2 -translate-y-1/2 text-lg"
-      />
+      ></div>
     {/if}
   </div>
   <div class="flex items-center gap-2">

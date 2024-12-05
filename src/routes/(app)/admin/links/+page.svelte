@@ -176,7 +176,8 @@
 
 <PageHeader title={m.admin_links_table_title()} />
 
-<form action="?/delete" method="post" use:enhance>
+<!-- svelte-ignore a11y_consider_explicit_label -->
+<form action="?/delete" method="post" id="form_delete" use:enhance>
   <div class="flex items-end gap-2">
     <button
       type="button"
@@ -200,35 +201,6 @@
       <SearchBar />
     </section>
   </div>
-
-  <dialog bind:this={removeModal} class="modal modal-bottom sm:modal-middle">
-    <div class="modal-box">
-      <h3 class="text-lg font-bold">{m.admin_links_remove_title()}</h3>
-      <p class="py-4">
-        {m.admin_links_remove_confirmation({
-          amount: checkboxes.filter((c) => c).length,
-        })}
-      </p>
-      <p class="text-xs text-base-content/60">
-        {data.domains
-          .filter((_, i) => checkboxes.at(i))
-          .map(({ shortCode }) => shortCode)
-          .join(", ")}
-      </p>
-      <div class="modal-action">
-        <button
-          type="submit"
-          class="btn btn-error"
-          on:click={() => removeModal?.close()}
-        >
-          {m.admin_links_remove_submit()}
-        </button>
-      </div>
-    </div>
-    <form method="dialog" class="modal-backdrop">
-      <button class="cursor-auto" />
-    </form>
-  </dialog>
 
   <div class="overflow-x-auto">
     <table class="table my-4">
@@ -266,7 +238,7 @@
               </th>
             {/if}
           {/each}
-          <th />
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -333,6 +305,38 @@
     </table>
   </div>
 </form>
+
+<dialog bind:this={removeModal} class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold">{m.admin_links_remove_title()}</h3>
+    <p class="py-4">
+      {m.admin_links_remove_confirmation({
+        amount: checkboxes.filter((c) => c).length,
+      })}
+    </p>
+    <p class="text-xs text-base-content/60">
+      {data.domains
+        .filter((_, i) => checkboxes.at(i))
+        .map(({ shortCode }) => shortCode)
+        .join(", ")}
+    </p>
+    <div class="modal-action">
+      <button
+        type="submit"
+        form="form_delete"
+        class="btn btn-error"
+        on:click={() => removeModal?.close()}
+      >
+        {m.admin_links_remove_submit()}
+      </button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <!-- svelte-ignore a11y_consider_explicit_label -->
+    <!-- svelte-ignore element_invalid_self_closing_tag -->
+    <button class="cursor-auto" />
+  </form>
+</dialog>
 
 <dialog bind:this={editModal} class="modal modal-top sm:modal-middle">
   <div class="modal-box !overflow-y-visible">

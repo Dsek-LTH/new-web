@@ -29,7 +29,7 @@
         {@html m.nolla_guild_description()}
       </p>
       <a class="neo-brutal-btn-flat w-min" href="/home"
-        >dsek.se <span class="i-mdi-arrow-right ml-2 h-8 w-8" /></a
+        >dsek.se <span class="i-mdi-arrow-right ml-2 h-8 w-8"></span></a
       >
     </section>
     <img
@@ -54,7 +54,7 @@
       </div>
       <div
         class="pointer-events-none absolute -bottom-1 -right-1 z-10 hidden h-20 w-20 rounded-br-[20px] border-b-4 border-r-4 border-black lg:block"
-      />
+      ></div>
     </div>
 
     <!-- Description -->
@@ -63,7 +63,7 @@
     >
       <div
         class="neo-brutal-border pointer-events-none absolute -right-1 bottom-16 left-0 top-0 hidden !rounded-b-none !border-b-0 border-r-4 lg:block"
-      />
+      ></div>
       <h3 class="font-nolla-mono text-2xl font-semibold">
         {@html m.nolla_guild_the_board()}
       </h3>
@@ -80,7 +80,7 @@
       <!-- For correct borders -->
       <div
         class="neo-brutal-border pointer-events-none absolute -bottom-1 left-0 right-[calc(50%+4rem)] top-0 hidden !rounded-r-none !border-r-0 lg:block"
-      />
+      ></div>
       <li>
         <b>{@html m.nolla_guild_board_president()}</b>
         {@html m.nolla_guild_board_president_description()}

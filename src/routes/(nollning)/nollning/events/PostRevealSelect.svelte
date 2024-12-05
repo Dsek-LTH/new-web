@@ -13,7 +13,8 @@
     {title}
     <span
       class=" i-mdi-chevron-down rotate-90 transition-transform duration-300 ease-out-back"
-    />
+    >
+    </span>
   </div>
   <div class="collapse-content px-0 peer-checked:!pb-0">
     <slot />

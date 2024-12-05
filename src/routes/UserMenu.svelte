@@ -20,7 +20,6 @@
 
 <div class="dropdown dropdown-end dropdown-hover">
   <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-  <!-- svelte-ignore a11y-label-has-associated-control -->
   <label tabindex="0" class="btn btn-ghost">
     {#await amountInCart}
       <MemberAvatar {member} />
@@ -51,40 +50,40 @@
         </h3>
       </div>
       <p class="text-sm">({user?.studentId})</p>
-      <span class="divider m-1" />
+      <span class="divider m-1"></span>
 
       <div class="flex flex-col items-start gap-2">
         <a
           href={`/members/me`}
           class="btn btn-ghost w-full justify-start text-base-content"
         >
-          <span class="i-mdi-account-circle size-6 text-primary" />
+          <span class="i-mdi-account-circle size-6 text-primary"></span>
           {m.navbar_userMenu_profile()}
         </a>
         <a href="/settings" class="btn btn-ghost w-full justify-start">
-          <span class="i-mdi-cog size-6 text-primary" />
+          <span class="i-mdi-cog size-6 text-primary"></span>
           {m.navbar_userMenu_settings()}
         </a>
         <a href="/shop/inventory" class="btn btn-ghost w-full justify-start">
-          <span class="i-mdi-treasure-chest size-6 text-primary" />
+          <span class="i-mdi-treasure-chest size-6 text-primary"></span>
           {m.navbar_userMenu_inventory()}
         </a>
         {#await amountInCart then amountInCart}
           {#if amountInCart > 0}
             <a href="/shop/cart" class="btn btn-ghost w-full justify-start">
-              <span class="i-mdi-cart size-6 text-primary" />
+              <span class="i-mdi-cart size-6 text-primary"></span>
               <span>{m.navbar_userMenu_cart()}</span>
               <span class="badge badge-primary badge-sm">{amountInCart}</span>
             </a>
           {/if}
         {/await}
       </div>
-      <span class="divider m-1" />
+      <span class="divider m-1"></span>
       <LoadingButton
         class="btn btn-ghost justify-start"
         onClick={() => signOut()}
       >
-        <span class="i-mdi-logout size-6 text-primary" />
+        <span class="i-mdi-logout size-6 text-primary"></span>
         {m.navbar_userMenu_logOut()}
       </LoadingButton>
     </div>

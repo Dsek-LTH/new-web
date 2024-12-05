@@ -34,7 +34,7 @@
         <th>{m.admin_access_role()}</th>
         <th>{m.admin_access_member()}</th>
         <th>{m.admin_access_createdAt()}</th>
-        <th />
+        <th></th>
       </tr>
     </thead>
 

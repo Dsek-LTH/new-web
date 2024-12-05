@@ -10,7 +10,7 @@
   import { zodClient } from "sveltekit-superforms/adapters";
   import { uploadSchema, type UploadSchema } from "./types";
 
-  export let data: PageData;
+  let { data }: { data: PageData } = $props();
   const { form, constraints, errors, enhance } = superForm(data.form, {
     onResult: (event) => {
       if (event.result.type === "success") {
@@ -25,8 +25,8 @@
   const file = fileProxy(form, "file");
   let fileInput: HTMLInputElement;
 
-  $: pathInfo = typeToPath[$form.type];
-  $: fileErrors = $errors.file as string | string[] | undefined;
+  let pathInfo = $derived(typeToPath[$form.type]);
+  let fileErrors = $derived($errors.file as string | string[] | undefined);
 </script>
 
 <SetPageTitle title={m.documents_uploadDocument()} />
@@ -75,7 +75,7 @@
       name="file"
       class="file-input file-input-bordered"
       bind:files={$file}
-      on:input={(e) => {
+      oninput={(e) => {
         if (e.currentTarget.files) {
           $form.name =
             e.currentTarget.files

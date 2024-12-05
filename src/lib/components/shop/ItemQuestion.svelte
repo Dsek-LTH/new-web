@@ -12,9 +12,16 @@
     formFieldProxy,
     type SuperForm,
   } from "sveltekit-superforms/client";
-  export let superform: SuperForm<TicketSchema>;
-  export let field: `questions[${number}]`;
-  export let onRemove: () => void;
+
+  let {
+    superform,
+    field,
+    onRemove,
+  }: {
+    superform: SuperForm<TicketSchema>;
+    field: `questions[${number}]`;
+    onRemove: () => void;
+  } = $props();
 
   const { value: type } = formFieldProxy(superform, `${field}.type`);
 
@@ -26,10 +33,12 @@
     errors: Writable<string[] | undefined>;
   };
 
-  $: if ($type !== QuestionType.MultipleChoice) {
-    if ($options) $options = [];
-  }
-  $: questionIndex = Number(field.match(/\d+/)![0]);
+  $effect(() => {
+    if ($type !== QuestionType.MultipleChoice) {
+      if ($options) $options = [];
+    }
+  });
+  let questionIndex = $derived(Number(field.match(/\d+/)![0]));
 </script>
 
 <div class="rounded-box bg-base-300 p-4">
@@ -88,19 +97,20 @@
         {/each}
       {/if}
       <div class="flex items-center justify-center">
+        <!-- svelte-ignore a11y_consider_explicit_label -->
         <button
           type="button"
           class="btn btn-primary btn-lg m-8"
-          on:click={() => {
+          onclick={() => {
             if ($options)
               $options = [...$options, { answer: "", extraPrice: null }];
             else $options = [{ answer: "", extraPrice: null }];
           }}
         >
-          <span class="i-mdi-plus-bold text-xl" /></button
+          <span class="i-mdi-plus-bold text-xl"></span></button
         >
       </div>
     </div>
   {/if}
-  <button class="btn btn-error mt-2" on:click={onRemove}>Ta bort fråga</button>
+  <button class="btn btn-error mt-2" onclick={onRemove}>Ta bort fråga</button>
 </div>

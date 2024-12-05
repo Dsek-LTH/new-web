@@ -45,7 +45,7 @@
         <li>
           <a href="https://www.afbostader.se/" class="link" target="_blank">
             AF Bostäder
-            <span class="i-mdi-external-link" />
+            <span class="i-mdi-external-link"></span>
           </a>
         </li>
         <li>
@@ -55,19 +55,19 @@
             target="_blank"
           >
             Boende i Lund
-            <span class="i-mdi-external-link" />
+            <span class="i-mdi-external-link"></span>
           </a>
         </li>
         <li>
           <a href="https://www.mhklund.se/" class="link" target="_blank">
             MHK
-            <span class="i-mdi-external-link" />
+            <span class="i-mdi-external-link"></span>
           </a>
         </li>
         <li>
           <a href="https://www.lkf.se/" class="link" target="_blank">
             LKF
-            <span class="i-mdi-external-link" />
+            <span class="i-mdi-external-link"></span>
           </a>
         </li>
       </ul>

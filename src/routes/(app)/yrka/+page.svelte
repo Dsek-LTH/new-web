@@ -32,14 +32,14 @@
       placeholder="att ta en 5 minuter toapaus"
       bind:value={$form.content}
       {...$constraints.content}
-    />
+    ></textarea>
     <span class="absolute left-4 top-12 text-sm italic opacity-50"
       >Jag yrkar på:
     </span>
   </Labeled>
   <button type="submit" class="btn btn-outline btn-primary self-start">
     {#if $submitting}
-      <span class="loading" />
+      <span class="loading"></span>
     {:else}
       Skicka
     {/if}

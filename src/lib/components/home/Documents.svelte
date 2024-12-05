@@ -20,7 +20,7 @@
           <a href={file.thumbnailUrl}>
             <span
               class="i-mdi-document size-6 max-lg:text-primary lg:text-secondary"
-            />
+            ></span>
             <span class="overflow-x-hidden text-ellipsis whitespace-nowrap">
               {file.name}
             </span>
@@ -44,7 +44,7 @@
           <a href={file.thumbnailUrl} class="text-ellipsis">
             <span
               class="i-mdi-document size-6 max-lg:text-primary lg:text-secondary"
-            />
+            ></span>
             <span class="overflow-x-hidden text-ellipsis whitespace-nowrap">
               {file.name}
             </span>

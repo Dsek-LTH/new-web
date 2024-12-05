@@ -16,11 +16,11 @@
   >
     {#if isAuthorized(apiNames.EVENT.CREATE, data.user)}
       <a class="btn" href="/events/create">
-        <span class="i-mdi-create" />{m.events_create()}
+        <span class="i-mdi-create"></span>{m.events_create()}
       </a>
     {/if}
     <a class="btn" href="/events/calendar">
-      <span class="i-mdi-calendar" />{m.events_calendar()}
+      <span class="i-mdi-calendar"></span>{m.events_calendar()}
     </a>
 
     <details
@@ -33,7 +33,7 @@
       }}
     >
       <summary class="btn flex-nowrap">
-        <span class="i-mdi-calendar-sync" />{m.events_calendar_subscribe()}
+        <span class="i-mdi-calendar-sync"></span>{m.events_calendar_subscribe()}
       </summary>
       <div class="dropdown-content z-[1] rounded-box bg-base-300 p-4 shadow">
         <p>
@@ -46,12 +46,12 @@
     </details>
     {#if isAuthorized(apiNames.TAGS.CREATE, data.user) || isAuthorized(apiNames.TAGS.UPDATE, data.user)}
       <a class="btn" href="/news/tags">
-        <span class="i-mdi-tag" />{m.events_tags()}
+        <span class="i-mdi-tag"></span>{m.events_tags()}
       </a>
     {/if}
     {#if isAuthorized(apiNames.TAGS.UPDATE, data.user)}
       <a class="btn" href="/events/all-events">
-        <span class="i-mdi-administrator" />Alla events
+        <span class="i-mdi-administrator"></span>Alla events
       </a>
     {/if}
   </div>

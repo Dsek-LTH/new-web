@@ -18,7 +18,7 @@
 
 <div class="mb-8 flex gap-4">
   <a class="btn" href="/booking">
-    <span class="i-mdi-arrow-expand-left" />
+    <span class="i-mdi-arrow-expand-left"></span>
     {m.booking_goBack()}
   </a>
   <a class="btn" href="/booking/create">
@@ -36,7 +36,7 @@
         <th>{m.booking_event()}</th>
         <th>{m.booking_responsible()}</th>
         <th>{m.booking_status()}</th>
-        <th />
+        <th></th>
       </tr>
     </thead>
 
@@ -99,7 +99,7 @@
                 class:btn-disabled={bookingRequest.status === "ACCEPTED"}
                 aria-label={m.booking_accept()}
               >
-                <span class="i-mdi-check" />
+                <span class="i-mdi-check"></span>
               </button>
               <button
                 formaction="?/reject"
@@ -107,7 +107,7 @@
                 class:btn-disabled={bookingRequest.status === "DENIED"}
                 aria-label={m.booking_deny()}
               >
-                <span class="i-mdi-close" />
+                <span class="i-mdi-close"></span>
               </button>
 
               <hr class="mx-2" />
@@ -117,7 +117,7 @@
                 class="btn btn-outline btn-xs"
                 aria-label={m.booking_edit()}
               >
-                <span class="i-mdi-edit" />
+                <span class="i-mdi-edit"></span>
               </a>
               <button
                 class="btn btn-outline btn-xs"
@@ -128,7 +128,7 @@
                   selectedBooking = bookingRequest;
                 }}
               >
-                <span class="i-mdi-delete" />
+                <span class="i-mdi-delete"></span>
               </button>
             </form>
           </td>

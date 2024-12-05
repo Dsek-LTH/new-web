@@ -58,7 +58,7 @@
   {/if}
 </p>
 <a href="manage/download-csv" class="btn btn-primary btn-sm mt-2"
-  ><span class="i-mdi-download" /> Ladda ner CSV</a
+  ><span class="i-mdi-download"></span> Ladda ner CSV</a
 >
 
 <ConsumablesTable

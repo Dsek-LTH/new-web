@@ -22,7 +22,7 @@
     class="absolute bottom-1 h-px w-[15%] bg-primary transition-all ease-out"
     class:opacity-0={currentRouteIndex === -1}
     style="left: {currentRouteIndex * (100 / routesToShow.length) + 2.5}%;"
-  />
+  ></div>
   {#each routesToShow as route (route.path)}
     {#await shopItemCounts?.inCart}
       <a href={route.path}>

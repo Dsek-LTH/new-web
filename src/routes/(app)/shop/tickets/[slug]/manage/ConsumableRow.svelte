@@ -95,7 +95,7 @@
   <th>
     {#if consumable?.consumedAt === null}
       <RowAction action="?/consume" consumableId={consumable.id}>
-        <span class="i-mdi-flame-circle text-xl text-secondary" />
+        <span class="i-mdi-flame-circle text-xl text-secondary"></span>
       </RowAction>
     {:else if consumable}
       <RowAction
@@ -103,7 +103,7 @@
         consumableId={consumable.id}
         warningMessage="Är du säker på att du vill avkonsumera biljetten?"
       >
-        <span class="i-mdi-redo-variant text-xl text-error" />
+        <span class="i-mdi-redo-variant text-xl text-error"></span>
       </RowAction>
     {:else}
       <span class="font-semibold text-gray-400">N/A</span>
@@ -116,7 +116,7 @@
         consumableId={consumable.id}
         warningMessage="Är du säker på att du vill ge personen en återbetalning?"
       >
-        <span class="i-mdi-cash-refund text-xl text-success" />
+        <span class="i-mdi-cash-refund text-xl text-success"></span>
       </RowAction>
     {/if}
   </th>

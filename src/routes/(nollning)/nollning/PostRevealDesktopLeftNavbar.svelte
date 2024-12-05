@@ -31,7 +31,7 @@
         buttonClass="btn btn-circle bg-base-200 relative aspect-square size-10 !p-0"
       >
         {#await notifications}
-          <span class="i-mdi-bell-outline size-7" />
+          <span class="i-mdi-bell-outline size-7"></span>
         {:then notifications}
           {@const unreadCount = notifications.filter(
             (data) => data.readAt == null,
@@ -42,7 +42,7 @@
                 class="translate badge indicator-item badge-primary badge-xs translate-x-0 translate-y-0"
               ></span>
             {/if}
-            <span class="i-mdi-bell-outline size-7" />
+            <span class="i-mdi-bell-outline size-7"></span>
           </div>
         {/await}
       </NotificationBell>
@@ -54,7 +54,7 @@
         tabindex="0"
         class="btn btn-circle aspect-square size-10 bg-base-200 !p-0"
       >
-        <span class="i-mdi-account-outline size-8" />
+        <span class="i-mdi-account-outline size-8"></span>
       </label>
       <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
       <ul
@@ -78,25 +78,25 @@
         <div class="divider m-0"></div>
         <li>
           <a href="/members/me"
-            ><span class="i-mdi-account text-2xl" />
+            ><span class="i-mdi-account text-2xl"></span>
             {m.navbar_userMenu_profile()}</a
           >
         </li>
         <li>
           <a href="{POST_REVEAL_PREFIX}/settings"
-            ><span class="i-mdi-settings-outline text-2xl" />
+            ><span class="i-mdi-settings-outline text-2xl"></span>
             {m.navbar_userMenu_settings()}</a
           >
         </li>
         <li>
           <a href="{POST_REVEAL_PREFIX}/shop/inventory"
-            ><span class="i-mdi-treasure-chest-outline text-2xl" />
+            ><span class="i-mdi-treasure-chest-outline text-2xl"></span>
             {m.navbar_userMenu_inventory()}</a
           >
         </li>
         <li>
           <a href="/">
-            D-sek <span class="i-mdi-arrow-right" />
+            D-sek <span class="i-mdi-arrow-right"></span>
           </a>
         </li>
         <li>

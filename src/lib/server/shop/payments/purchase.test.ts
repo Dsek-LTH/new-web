@@ -593,9 +593,10 @@ describe("Purchase as logged in user", async () => {
 
   const prismaWithAccess = enhance(prisma, {
     user: {
-      studentId: users.customerMember.studentId,
+      studentId: users.customerMember.studentId ?? undefined,
       memberId: users.customerMember.id,
       policies: [apiNames.EVENT.READ, apiNames.MEMBER.READ],
+      roles: [],
     },
   });
   addPurchaseTestForUser(

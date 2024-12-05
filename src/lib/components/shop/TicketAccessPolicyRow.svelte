@@ -13,6 +13,7 @@
 <div class="join flex items-end gap-2">
   {#if isRole}
     <FormInput {superform} field="accessPolicies[{index}].role" label="Roll" />
+    <!-- svelte-ignore a11y_consider_explicit_label -->
     <button
       type="button"
       class="btn tooltip"
@@ -23,7 +24,7 @@
         $value.studentId = "";
       }}
     >
-      <span class="i-mdi-person" />
+      <span class="i-mdi-person"></span>
     </button>
   {:else}
     <FormInput
@@ -31,6 +32,7 @@
       field="accessPolicies[{index}].studentId"
       label="StiL-ID"
     />
+    <!-- svelte-ignore a11y_consider_explicit_label -->
     <button
       type="button"
       class="btn tooltip"
@@ -41,10 +43,11 @@
         $value.role = "";
       }}
     >
-      <span class="i-mdi-group" />
+      <span class="i-mdi-group"></span>
     </button>
   {/if}
+  <!-- svelte-ignore a11y_consider_explicit_label -->
   <button type="button" class="btn btn-error" on:click={onRemove}>
-    <span class="i-mdi-trash" />
+    <span class="i-mdi-trash"></span>
   </button>
 </div>

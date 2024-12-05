@@ -17,11 +17,11 @@
 
   <div class="flex flex-row gap-5 pt-10">
     <a href="/" class="btn btn-primary text-lg">
-      {m.home()} <span class="i-mdi-house" />
+      {m.home()} <span class="i-mdi-house"></span>
     </a>
 
     <button class="btn btn-secondary text-lg" on:click={() => history.back()}>
-      {m.back()} <span class="i-mdi-keyboard-backspace" />
+      {m.back()} <span class="i-mdi-keyboard-backspace"></span>
     </button>
   </div>
   <div class="pt-16 text-center text-lg">
@@ -31,12 +31,12 @@
         href="https://github.com/Dsek-LTH/web/issues/new"
         class="btn btn-ghost text-lg"
       >
-        {m.error_create_issue()} <span class="i-mdi-bug" />
+        {m.error_create_issue()} <span class="i-mdi-bug"></span>
       </a>
 
       <span class="text-xl font-extrabold">{m.error_or()}</span>
       <a href="mailto:dwww@dsek.se" class="btn btn-ghost text-lg"
-        >{m.error_contact()} <span class="i-mdi-email" /></a
+        >{m.error_contact()} <span class="i-mdi-email"></span></a
       >
     </div>
   </div>

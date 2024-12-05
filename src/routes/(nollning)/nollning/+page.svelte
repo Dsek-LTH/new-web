@@ -176,11 +176,11 @@
         <div
           class="h-full w-full bg-cover bg-center bg-no-repeat max-md:bg-scroll md:hidden md:bg-fixed"
           style="background-image: url('{groupProfile}'); box-shadow: inset 0 -100px 100px -100px #303B70;"
-        />
+        ></div>
         <div
           class="hidden h-full w-full bg-cover bg-center bg-no-repeat max-md:bg-scroll md:block md:bg-fixed"
           style="background-image: url('{groupLandscape}'); box-shadow: inset 0 -100px 100px -100px #303B70;"
-        />
+        ></div>
 
         <span
           class="absolute inset-x-4 bottom-10 hidden max-w-full transform text-center font-nolla-stab text-7xl leading-snug md:block lg:text-8xl"
@@ -271,7 +271,7 @@
         <div
           class="absolute -inset-x-[50dvw] -inset-y-10 z-0 bg-cover bg-center bg-no-repeat opacity-15 max-md:bg-scroll md:bg-fixed"
           style={`background-image: url('${stormBg}')`}
-        />
+        ></div>
         <h1
           class="z-10 mb-4 rounded-btn p-2 text-center font-nolla-stab text-8xl tracking-wider md:text-9xl"
         >
@@ -301,7 +301,7 @@
       <div
         class="absolute -inset-x-[50dvw] -inset-y-10 -z-0 opacity-15 max-md:bg-[length:32rem] max-md:bg-scroll md:bg-[length:48rem] md:bg-fixed"
         style={`background-image: url('${cowprint}')`}
-      />
+      ></div>
       <h1
         class="z-10 mb-4 rounded-btn p-2 text-center font-nolla-pepp text-5xl md:text-8xl"
       >
