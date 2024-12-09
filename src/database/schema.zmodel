@@ -536,19 +536,6 @@ model Markdown {
   @@map("markdowns")
 }
 
-model Meeting {
-  id    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title String   @db.VarChar(255)
-  date  DateTime @db.Date
-  url   String   @unique @db.VarChar(255)
-
-  @@allow("create", has(auth().policies, "fileHandler:documents:create"))
-  @@allow("read", has(auth().policies, "fileHandler:documents:read"))
-  @@allow("update", has(auth().policies, "fileHandler:documents:update"))
-  @@allow("delete", has(auth().policies, "fileHandler:documents:delete"))
-  @@map("meetings")
-}
-
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-commentsmodel Members{
 model Member {
   id                      String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -599,6 +586,10 @@ model Member {
   @@allow('update', has(auth().policies, "core:member:update"))
   @@allow('delete', has(auth().policies, "core:member:delete"))
   @@map("members")
+
+  speaker                 Speaker[]
+
+  meetingLog              MeetingLog[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-commentsmodel Notifications{
@@ -1152,4 +1143,89 @@ model ShoppableAccessPolicy {
   // only managers can delete (should very rarely be done)
   @@allow("delete", auth().memberId == shoppable.authorId || has(auth().policies, "webshop:manage"))
   @@map("shoppable_access_policies")
+}
+
+abstract model MeetingBase {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String    @db.VarChar(255)
+  description String?   @db.VarChar(255)
+  type        String    @db.VarChar(255)
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6) @updatedAt()
+  start       DateTime  @db.Timestamptz(6)
+  end         DateTime  @db.Timestamptz(6)
+}
+
+model Meeting extends MeetingBase {
+
+  items        MeetingAgendaItem[]
+  // Remove the "notice" field from the "Meeting" model
+  notice       MeetingAttachment?  @relation("meeting_notice", fields: [noticeId], references: [id])
+  noticeId     String?             @map("notice_id") @db.Uuid @unique
+  agenda       MeetingAttachment?  @relation("meeting_agenda", fields: [agendaId], references: [id])
+  agendaId     String?             @map("agenda_id") @db.Uuid @unique
+  minutes      MeetingAttachment?  @relation("meeting_minutes", fields: [minutesId], references: [id])
+  minutesId    String?             @map("minutes_id") @db.Uuid @unique
+
+  @@allow("create", has(auth().policies, "fileHandler:documents:create"))
+  @@allow("read", has(auth().policies, "fileHandler:documents:read"))
+  @@allow("update", has(auth().policies, "fileHandler:documents:update"))
+  @@allow("delete", has(auth().policies, "fileHandler:documents:delete"))
+  @@map("meetings")
+
+  speakersList Speaker[]
+
+  meetingLog   MeetingLog[]
+}
+
+// These are the bullet points of a meeting, equal to the ones in the meeting agenda document
+model MeetingAgendaItem extends MeetingBase {
+  meetingId   String                    @map("meeting_id") @db.Uuid
+  meeting     Meeting                   @relation(fields: [meetingId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "meeting_agenda_items_meeting_id_foreign")
+  attachments MeetingAgendaAttachment[]
+  @@map("meeting_agenda_items")
+}
+
+// An attachment to either an item or a meeting
+abstract model MeetingAttachmentBase {
+  id      String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fileUrl String @map("file_url") @db.VarChar(255)
+  order   Int    @default(0)
+}
+
+model MeetingAgendaAttachment extends MeetingAttachmentBase {
+  meetingAgendaItem   MeetingAgendaItem @relation(fields: [meetingAgendaItemId], references: [id])
+  meetingAgendaItemId String            @db.Uuid
+}
+
+model MeetingAttachment extends MeetingAttachmentBase {
+  noticeFor  Meeting[] @relation("meeting_notice")
+  minutesFor Meeting[] @relation("meeting_minutes")
+  agendaFor  Meeting[] @relation("meeting_agenda")
+}
+
+model Speaker {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  meetingId String   @map("meeting_id") @db.Uuid
+  memberId  String   @map("member_id") @db.Uuid
+  meeting   Meeting  @relation(fields: [meetingId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "speakers_meeting_id_foreign")
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "speakers_member_id_foreign")
+  start     DateTime @db.Timestamptz(6)
+  end       DateTime @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @db.Timestamptz(6) @updatedAt()
+  @@map("speakers")
+}
+
+model MeetingLog {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  meetingId  String   @map("meeting_id") @db.Uuid
+  memberId   String   @map("member_id") @db.Uuid
+  meeting    Meeting  @relation(fields: [meetingId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "meeting_logs_meeting_id_foreign")
+  member     Member   @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "meeting_logs_member_id_foreign")
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime @default(now()) @db.Timestamptz(6) @updatedAt()
+  comment    String   @db.Text
+  happenedAt DateTime @default(now()) @db.Timestamptz(6)
+  @@map("meeting_logs")
 }

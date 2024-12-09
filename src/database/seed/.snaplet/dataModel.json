@@ -1,5 +1,195 @@
 {
   "models": {
+    "MeetingAgendaAttachment": {
+      "id": "public.MeetingAgendaAttachment",
+      "schemaName": "public",
+      "tableName": "MeetingAgendaAttachment",
+      "fields": [
+        {
+          "id": "public.MeetingAgendaAttachment.id",
+          "name": "id",
+          "columnName": "id",
+          "type": "uuid",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": true,
+          "maxLength": null
+        },
+        {
+          "id": "public.MeetingAgendaAttachment.file_url",
+          "name": "file_url",
+          "columnName": "file_url",
+          "type": "varchar",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": 255
+        },
+        {
+          "id": "public.MeetingAgendaAttachment.order",
+          "name": "order",
+          "columnName": "order",
+          "type": "int4",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.MeetingAgendaAttachment.meetingAgendaItemId",
+          "name": "meetingAgendaItemId",
+          "columnName": "meetingAgendaItemId",
+          "type": "uuid",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "name": "meeting_agenda_items",
+          "type": "meeting_agenda_items",
+          "isRequired": true,
+          "kind": "object",
+          "relationName": "MeetingAgendaAttachmentTomeeting_agenda_items",
+          "relationFromFields": [
+            "meetingAgendaItemId"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        }
+      ],
+      "uniqueConstraints": [
+        {
+          "name": "MeetingAgendaAttachment_pkey",
+          "fields": [
+            "id"
+          ],
+          "nullNotDistinct": false
+        }
+      ]
+    },
+    "MeetingAttachment": {
+      "id": "public.MeetingAttachment",
+      "schemaName": "public",
+      "tableName": "MeetingAttachment",
+      "fields": [
+        {
+          "id": "public.MeetingAttachment.id",
+          "name": "id",
+          "columnName": "id",
+          "type": "uuid",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": true,
+          "maxLength": null
+        },
+        {
+          "id": "public.MeetingAttachment.file_url",
+          "name": "file_url",
+          "columnName": "file_url",
+          "type": "varchar",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": 255
+        },
+        {
+          "id": "public.MeetingAttachment.order",
+          "name": "order",
+          "columnName": "order",
+          "type": "int4",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "name": "meetings_meetings_agenda_idToMeetingAttachment",
+          "type": "meetings",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "meetings_agenda_idToMeetingAttachment",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "meetings_meetings_minutes_idToMeetingAttachment",
+          "type": "meetings",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "meetings_minutes_idToMeetingAttachment",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "meetings_meetings_notice_idToMeetingAttachment",
+          "type": "meetings",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "meetings_notice_idToMeetingAttachment",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        }
+      ],
+      "uniqueConstraints": [
+        {
+          "name": "MeetingAttachment_pkey",
+          "fields": [
+            "id"
+          ],
+          "nullNotDistinct": false
+        }
+      ]
+    },
     "RecurringEvent": {
       "id": "public.RecurringEvent",
       "schemaName": "public",
@@ -5396,6 +5586,330 @@
         }
       ]
     },
+    "meeting_agenda_items": {
+      "id": "public.meeting_agenda_items",
+      "schemaName": "public",
+      "tableName": "meeting_agenda_items",
+      "fields": [
+        {
+          "id": "public.meeting_agenda_items.id",
+          "name": "id",
+          "columnName": "id",
+          "type": "uuid",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": true,
+          "maxLength": null
+        },
+        {
+          "id": "public.meeting_agenda_items.title",
+          "name": "title",
+          "columnName": "title",
+          "type": "varchar",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": 255
+        },
+        {
+          "id": "public.meeting_agenda_items.description",
+          "name": "description",
+          "columnName": "description",
+          "type": "varchar",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": 255
+        },
+        {
+          "id": "public.meeting_agenda_items.type",
+          "name": "type",
+          "columnName": "type",
+          "type": "varchar",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": 255
+        },
+        {
+          "id": "public.meeting_agenda_items.created_at",
+          "name": "created_at",
+          "columnName": "created_at",
+          "type": "timestamptz",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.meeting_agenda_items.updated_at",
+          "name": "updated_at",
+          "columnName": "updated_at",
+          "type": "timestamptz",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.meeting_agenda_items.start",
+          "name": "start",
+          "columnName": "start",
+          "type": "timestamptz",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.meeting_agenda_items.end",
+          "name": "end",
+          "columnName": "end",
+          "type": "timestamptz",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.meeting_agenda_items.meeting_id",
+          "name": "meeting_id",
+          "columnName": "meeting_id",
+          "type": "uuid",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "name": "meetings",
+          "type": "meetings",
+          "isRequired": true,
+          "kind": "object",
+          "relationName": "meeting_agenda_itemsTomeetings",
+          "relationFromFields": [
+            "meeting_id"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "MeetingAgendaAttachment",
+          "type": "MeetingAgendaAttachment",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "MeetingAgendaAttachmentTomeeting_agenda_items",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        }
+      ],
+      "uniqueConstraints": [
+        {
+          "name": "meeting_agenda_items_pkey",
+          "fields": [
+            "id"
+          ],
+          "nullNotDistinct": false
+        }
+      ]
+    },
+    "meeting_logs": {
+      "id": "public.meeting_logs",
+      "schemaName": "public",
+      "tableName": "meeting_logs",
+      "fields": [
+        {
+          "id": "public.meeting_logs.id",
+          "name": "id",
+          "columnName": "id",
+          "type": "uuid",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": true,
+          "maxLength": null
+        },
+        {
+          "id": "public.meeting_logs.meeting_id",
+          "name": "meeting_id",
+          "columnName": "meeting_id",
+          "type": "uuid",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.meeting_logs.member_id",
+          "name": "member_id",
+          "columnName": "member_id",
+          "type": "uuid",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.meeting_logs.createdAt",
+          "name": "createdAt",
+          "columnName": "createdAt",
+          "type": "timestamptz",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.meeting_logs.updatedAt",
+          "name": "updatedAt",
+          "columnName": "updatedAt",
+          "type": "timestamptz",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.meeting_logs.comment",
+          "name": "comment",
+          "columnName": "comment",
+          "type": "text",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.meeting_logs.happenedAt",
+          "name": "happenedAt",
+          "columnName": "happenedAt",
+          "type": "timestamptz",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "name": "meetings",
+          "type": "meetings",
+          "isRequired": true,
+          "kind": "object",
+          "relationName": "meeting_logsTomeetings",
+          "relationFromFields": [
+            "meeting_id"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "members",
+          "type": "members",
+          "isRequired": true,
+          "kind": "object",
+          "relationName": "meeting_logsTomembers",
+          "relationFromFields": [
+            "member_id"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        }
+      ],
+      "uniqueConstraints": [
+        {
+          "name": "meeting_logs_pkey",
+          "fields": [
+            "id"
+          ],
+          "nullNotDistinct": false
+        }
+      ]
+    },
     "meetings": {
       "id": "public.meetings",
       "schemaName": "public",
@@ -5430,10 +5944,52 @@
           "maxLength": 255
         },
         {
-          "id": "public.meetings.date",
-          "name": "date",
-          "columnName": "date",
-          "type": "date",
+          "id": "public.meetings.agenda_id",
+          "name": "agenda_id",
+          "columnName": "agenda_id",
+          "type": "uuid",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.meetings.created_at",
+          "name": "created_at",
+          "columnName": "created_at",
+          "type": "timestamptz",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.meetings.description",
+          "name": "description",
+          "columnName": "description",
+          "type": "varchar",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": 255
+        },
+        {
+          "id": "public.meetings.end",
+          "name": "end",
+          "columnName": "end",
+          "type": "timestamptz",
           "isRequired": true,
           "kind": "scalar",
           "isList": false,
@@ -5444,9 +6000,51 @@
           "maxLength": null
         },
         {
-          "id": "public.meetings.url",
-          "name": "url",
-          "columnName": "url",
+          "id": "public.meetings.minutes_id",
+          "name": "minutes_id",
+          "columnName": "minutes_id",
+          "type": "uuid",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.meetings.notice_id",
+          "name": "notice_id",
+          "columnName": "notice_id",
+          "type": "uuid",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.meetings.start",
+          "name": "start",
+          "columnName": "start",
+          "type": "timestamptz",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.meetings.type",
+          "name": "type",
+          "columnName": "type",
           "type": "varchar",
           "isRequired": true,
           "kind": "scalar",
@@ -5456,6 +6054,116 @@
           "hasDefaultValue": false,
           "isId": false,
           "maxLength": 255
+        },
+        {
+          "id": "public.meetings.updated_at",
+          "name": "updated_at",
+          "columnName": "updated_at",
+          "type": "timestamptz",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "name": "MeetingAttachment_meetings_agenda_idToMeetingAttachment",
+          "type": "MeetingAttachment",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "meetings_agenda_idToMeetingAttachment",
+          "relationFromFields": [
+            "agenda_id"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "MeetingAttachment_meetings_minutes_idToMeetingAttachment",
+          "type": "MeetingAttachment",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "meetings_minutes_idToMeetingAttachment",
+          "relationFromFields": [
+            "minutes_id"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "MeetingAttachment_meetings_notice_idToMeetingAttachment",
+          "type": "MeetingAttachment",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "meetings_notice_idToMeetingAttachment",
+          "relationFromFields": [
+            "notice_id"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "meeting_agenda_items",
+          "type": "meeting_agenda_items",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "meeting_agenda_itemsTomeetings",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "meeting_logs",
+          "type": "meeting_logs",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "meeting_logsTomeetings",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "speakers",
+          "type": "speakers",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "speakersTomeetings",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
         }
       ],
       "uniqueConstraints": [
@@ -5467,9 +6175,23 @@
           "nullNotDistinct": false
         },
         {
-          "name": "meetings_url_key",
+          "name": "meetings_agenda_id_key",
           "fields": [
-            "url"
+            "agenda_id"
+          ],
+          "nullNotDistinct": false
+        },
+        {
+          "name": "meetings_minutes_id_key",
+          "fields": [
+            "minutes_id"
+          ],
+          "nullNotDistinct": false
+        },
+        {
+          "name": "meetings_notice_id_key",
+          "fields": [
+            "notice_id"
           ],
           "nullNotDistinct": false
         }
@@ -5919,6 +6641,20 @@
           "hasDefaultValue": false
         },
         {
+          "name": "meeting_logs",
+          "type": "meeting_logs",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "meeting_logsTomembers",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
           "name": "notifications",
           "type": "notifications",
           "isRequired": false,
@@ -5980,6 +6716,20 @@
           "isRequired": false,
           "kind": "object",
           "relationName": "shoppable_access_policiesTomembers",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "speakers",
+          "type": "speakers",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "speakersTomembers",
           "relationFromFields": [],
           "relationToFields": [],
           "isList": true,
@@ -8386,6 +9136,156 @@
           "name": "songs_slug_unique",
           "fields": [
             "slug"
+          ],
+          "nullNotDistinct": false
+        }
+      ]
+    },
+    "speakers": {
+      "id": "public.speakers",
+      "schemaName": "public",
+      "tableName": "speakers",
+      "fields": [
+        {
+          "id": "public.speakers.id",
+          "name": "id",
+          "columnName": "id",
+          "type": "uuid",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": true,
+          "maxLength": null
+        },
+        {
+          "id": "public.speakers.meeting_id",
+          "name": "meeting_id",
+          "columnName": "meeting_id",
+          "type": "uuid",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.speakers.member_id",
+          "name": "member_id",
+          "columnName": "member_id",
+          "type": "uuid",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.speakers.start",
+          "name": "start",
+          "columnName": "start",
+          "type": "timestamptz",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.speakers.end",
+          "name": "end",
+          "columnName": "end",
+          "type": "timestamptz",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.speakers.createdAt",
+          "name": "createdAt",
+          "columnName": "createdAt",
+          "type": "timestamptz",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.speakers.updatedAt",
+          "name": "updatedAt",
+          "columnName": "updatedAt",
+          "type": "timestamptz",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "name": "meetings",
+          "type": "meetings",
+          "isRequired": true,
+          "kind": "object",
+          "relationName": "speakersTomeetings",
+          "relationFromFields": [
+            "meeting_id"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "members",
+          "type": "members",
+          "isRequired": true,
+          "kind": "object",
+          "relationName": "speakersTomembers",
+          "relationFromFields": [
+            "member_id"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        }
+      ],
+      "uniqueConstraints": [
+        {
+          "name": "speakers_pkey",
+          "fields": [
+            "id"
           ],
           "nullNotDistinct": false
         }

@@ -539,19 +539,6 @@ model Markdown {
     @@map("markdowns")
 }
 
-/// @@allow('create', has(auth().policies, 'fileHandler:documents:create'))
-/// @@allow('read', has(auth().policies, 'fileHandler:documents:read'))
-/// @@allow('update', has(auth().policies, 'fileHandler:documents:update'))
-/// @@allow('delete', has(auth().policies, 'fileHandler:documents:delete'))
-model Meeting {
-    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
-    title String @db.VarChar(255)
-    date DateTime @db.Date()
-    url String @unique() @db.VarChar(255)
-
-    @@map("meetings")
-}
-
 /// @@allow('create', has(auth().policies, 'core:member:create'))
 /// @@allow('create', auth().studentId == studentId)
 /// @@allow('read', has(auth().policies, 'core:member:read'))
@@ -600,6 +587,8 @@ model Member {
     shopReservations ConsumableReservation[]
     bookingRequests BookingRequest[]
     recurringEvent RecurringEvent[]
+    speaker Speaker[]
+    meetingLog MeetingLog[]
 
     @@map("members")
 }
@@ -1073,4 +1062,91 @@ model ShoppableAccessPolicy {
     createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
     @@map("shoppable_access_policies")
+}
+
+/// @@allow('create', has(auth().policies, 'fileHandler:documents:create'))
+/// @@allow('read', has(auth().policies, 'fileHandler:documents:read'))
+/// @@allow('update', has(auth().policies, 'fileHandler:documents:update'))
+/// @@allow('delete', has(auth().policies, 'fileHandler:documents:delete'))
+model Meeting {
+    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+    title String @db.VarChar(255)
+    description String? @db.VarChar(255)
+    type String @db.VarChar(255)
+    createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+    updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6) @updatedAt()
+    start DateTime @db.Timestamptz(6)
+    end DateTime @db.Timestamptz(6)
+    items MeetingAgendaItem[]
+    notice MeetingAttachment? @relation("meeting_notice", fields: [noticeId], references: [id])
+    noticeId String? @map("notice_id") @db.Uuid() @unique()
+    agenda MeetingAttachment? @relation("meeting_agenda", fields: [agendaId], references: [id])
+    agendaId String? @map("agenda_id") @db.Uuid() @unique()
+    minutes MeetingAttachment? @relation("meeting_minutes", fields: [minutesId], references: [id])
+    minutesId String? @map("minutes_id") @db.Uuid() @unique()
+    speakersList Speaker[]
+    meetingLog MeetingLog[]
+
+    @@map("meetings")
+}
+
+model MeetingAgendaItem {
+    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+    title String @db.VarChar(255)
+    description String? @db.VarChar(255)
+    type String @db.VarChar(255)
+    createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+    updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6) @updatedAt()
+    start DateTime @db.Timestamptz(6)
+    end DateTime @db.Timestamptz(6)
+    meetingId String @map("meeting_id") @db.Uuid()
+    meeting Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "meeting_agenda_items_meeting_id_foreign")
+    attachments MeetingAgendaAttachment[]
+
+    @@map("meeting_agenda_items")
+}
+
+model MeetingAgendaAttachment {
+    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+    fileUrl String @map("file_url") @db.VarChar(255)
+    order Int @default(0)
+    meetingAgendaItem MeetingAgendaItem @relation(fields: [meetingAgendaItemId], references: [id])
+    meetingAgendaItemId String @db.Uuid()
+}
+
+model MeetingAttachment {
+    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+    fileUrl String @map("file_url") @db.VarChar(255)
+    order Int @default(0)
+    noticeFor Meeting[] @relation("meeting_notice")
+    minutesFor Meeting[] @relation("meeting_minutes")
+    agendaFor Meeting[] @relation("meeting_agenda")
+}
+
+model Speaker {
+    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+    meetingId String @map("meeting_id") @db.Uuid()
+    memberId String @map("member_id") @db.Uuid()
+    meeting Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "speakers_meeting_id_foreign")
+    member Member @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "speakers_member_id_foreign")
+    start DateTime @db.Timestamptz(6)
+    end DateTime @db.Timestamptz(6)
+    createdAt DateTime @default(now()) @db.Timestamptz(6)
+    updatedAt DateTime @default(now()) @db.Timestamptz(6) @updatedAt()
+
+    @@map("speakers")
+}
+
+model MeetingLog {
+    id String @id() @default(dbgenerated("gen_random_uuid()")) @db.Uuid()
+    meetingId String @map("meeting_id") @db.Uuid()
+    memberId String @map("member_id") @db.Uuid()
+    meeting Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "meeting_logs_meeting_id_foreign")
+    member Member @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "meeting_logs_member_id_foreign")
+    createdAt DateTime @default(now()) @db.Timestamptz(6)
+    updatedAt DateTime @default(now()) @db.Timestamptz(6) @updatedAt()
+    comment String @db.Text()
+    happenedAt DateTime @default(now()) @db.Timestamptz(6)
+
+    @@map("meeting_logs")
 }
