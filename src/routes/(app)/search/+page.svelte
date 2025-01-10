@@ -1,19 +1,30 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
   import * as m from "$paraglide/messages";
-  import type { ActionData } from "./$types";
   import SearchResultList from "$lib/components/search/SearchResultList.svelte";
-  import { availableSearchIndexes } from "$lib/search/searchTypes";
+  import {
+    availableSearchIndexes,
+    type SearchDataWithType,
+  } from "$lib/search/searchTypes";
   import { mapIndexToMessage } from "$lib/search/searchHelpers";
+  import { isSearchResultData } from "$lib/components/search/SearchUtils";
 
-  export let form: ActionData;
   let formElement: HTMLFormElement;
   let inputElement: HTMLInputElement;
   let listItems: HTMLAnchorElement[] = [];
+  let timeout: ReturnType<typeof setTimeout> | null = null;
+
+  let input = "";
+  let limit = 20; // limits number of results per query, default in Meili is 20
+  let offset = 0;
   let currentIndex = -1;
   let isSearching = false;
+  let thereIsMore = true;
 
-  $: noResults = form?.results?.length === 0;
+  let results: SearchDataWithType[] = [];
+  let error: Record<string, unknown> | undefined = undefined;
+
+  $: noResults = results.length === 0;
 
   $: toSearchOn = availableSearchIndexes.map((index) => {
     return {
@@ -26,35 +37,36 @@
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- This syntax is valid and it's a good use case here
   $: toSearchOn && handleSearch();
 
-  let timeout: ReturnType<typeof setTimeout> | null = null;
-  let input = "";
-
   function handleSearch() {
-    if (!input) {
-      reset();
-      return;
-    }
     // Cancel the previous timeout
     if (timeout) clearTimeout(timeout);
-    // Do the search after 300ms
-    timeout = setTimeout(() => {
-      formElement.requestSubmit();
-      currentIndex = -1;
-    }, 300);
-    isSearching = true;
+    offset = 0;
+    // When user requests a search with empty string
+    // Happens when the user deletes the last key of the input
+    // We shouldn't search then
+    if (!input) {
+      isSearching = false;
+      results = [];
+      return;
+    } else {
+      // Do the search after 300ms
+      timeout = setTimeout(() => {
+        offset = 0;
+        formElement.requestSubmit();
+        currentIndex = -1;
+      }, 300);
+      isSearching = true;
+    }
   }
 
-  function reset() {
-    isSearching = false;
-    if (form) {
-      form.results = [];
-      form.message = undefined;
-    }
+  function showMore() {
+    offset += limit;
+    setTimeout(() => formElement.requestSubmit(), 0);
   }
 
   function onKeyDown(event: KeyboardEvent) {
     // Most probable case first: user just presses a key
-    // We should then start searcing
+    // We should then start searching
     // (the actual search is executed by input on:input)
     if (
       (currentIndex !== -1 && event.key.length === 1) ||
@@ -115,10 +127,29 @@
 
 <form
   method="POST"
-  class="mx-auto mt-8 max-w-lg"
+  class="mx-auto mb-4 mt-8 max-w-lg"
   bind:this={formElement}
   use:enhance={async () => {
-    return async ({ update }) => {
+    return async ({ update, result: incomingResults }) => {
+      if (
+        incomingResults.type === "success" &&
+        isSearchResultData(incomingResults.data)
+      ) {
+        // If the offset wasn't 0, then we should append the results
+        if (offset != 0) {
+          results = results.concat(incomingResults.data.results);
+        } // Otherwise just write over the results
+        else {
+          results = incomingResults.data.results;
+        }
+        error = undefined;
+        thereIsMore = incomingResults.data.results.length >= limit;
+      } else if (incomingResults.type === "failure") {
+        results = [];
+        error = incomingResults.data;
+      } else {
+        console.log("Unknown return from search", incomingResults);
+      }
       await update({
         reset: false,
       });
@@ -157,14 +188,12 @@
         <label for={index.index}>{mapIndexToMessage(index.index)}</label>
       </div>
     {/each}
-    <!-- This field limits the number of results per query -->
-    <!-- 20 is the default value in Meilisearch -->
-    <input type="hidden" name="limit" value="20" />
+    <input type="hidden" name="limit" value={limit} />
   </div>
   <button class="btn sr-only mb-2 w-full">{m.search_search()}</button>
-  {#if form?.results?.length}
+  {#if results.length}
     <div class="menu rounded-box bg-base-200">
-      <SearchResultList results={form?.results} />
+      <SearchResultList {results} />
     </div>
   {:else if !isSearching && input.length > 0 && noResults}
     <div class="menu rounded-box bg-base-200">
@@ -175,9 +204,16 @@
       </li>
     </div>
   {/if}
-  {#if form?.message}
-    <div class="alert alert-error mt-4">
-      Error: {JSON.stringify(form.message)}
+  {#if error !== undefined}
+    <div class="alert alert-error">
+      Error: {JSON.stringify(error)}
     </div>
   {/if}
+  {#if results.length > 0 && thereIsMore}
+    <!-- show more results -->
+    <button type="button" class="btn m-4" on:click={showMore}>
+      {m.search_showMore()}
+    </button>
+  {/if}
+  <input type="hidden" name="offset" value={offset} />
 </form>

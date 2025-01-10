@@ -49,6 +49,8 @@ export const GET: RequestHandler = async ({ url, locals }) => {
   }
   const language = locals.language;
 
+  const offset = Number.parseInt(url.searchParams.get("offset") ?? "0");
+
   const response: SearchDataWithType[] = await meilisearch
     .multiSearch({
       queries: indexes.map((index) => ({
@@ -60,6 +62,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
       })),
       federation: {
         limit,
+        offset,
       },
     })
     .then((response) => {

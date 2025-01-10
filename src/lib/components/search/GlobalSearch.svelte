@@ -6,42 +6,43 @@
   import * as m from "$paraglide/messages";
   import { enhance } from "$app/forms";
   import SearchResultList from "./SearchResultList.svelte";
+  import { isSearchResultData } from "./SearchUtils";
   let dialog: HTMLDialogElement;
 
-  let inputElement: HTMLInputElement;
   let formElement: HTMLFormElement;
+  let inputElement: HTMLInputElement;
   let listItems: HTMLAnchorElement[] = [];
-  let results: SearchDataWithType[] = [];
-  let error: Record<string, unknown> | undefined = undefined;
+  let timeout: ReturnType<typeof setTimeout> | null = null;
   let advancedSearchElement: HTMLAnchorElement;
 
-  let timeout: ReturnType<typeof setTimeout> | null = null;
   let input = "";
   let currentIndex = -1;
   let isSearching = false;
   let isOpen = false;
 
+  let results: SearchDataWithType[] = [];
+  let error: Record<string, unknown> | undefined = undefined;
+
   $: noResults = results.length === 0;
 
   function handleSearch() {
-    if (!input) {
-      reset();
-      return;
-    }
     // Cancel the previous timeout
     if (timeout) clearTimeout(timeout);
-    // Do the search after 300ms
-    timeout = setTimeout(() => {
-      formElement.requestSubmit();
-      currentIndex = -1;
-    }, 300);
-    isSearching = true;
-  }
-
-  function reset() {
-    isSearching = false;
-    results = [];
-    error = undefined;
+    // When user requests a search with empty string
+    // Happens when the user deletes the last key of the input
+    // We shouldn't search then
+    if (!input) {
+      isSearching = false;
+      results = [];
+      return;
+    } else {
+      // Do the search after 300ms
+      timeout = setTimeout(() => {
+        formElement.requestSubmit();
+        currentIndex = -1;
+      }, 300);
+      isSearching = true;
+    }
   }
 
   function show() {
@@ -58,7 +59,7 @@
 
   function handleKeydown(event: KeyboardEvent) {
     // Most probable case first: user just presses a key
-    // We should then start searcing
+    // We should then start searching
     // (the actual search is executed by input on:input)
     if (
       (isOpen && currentIndex !== -1 && event.key.length === 1) ||
@@ -135,17 +136,6 @@
       ) as HTMLAnchorElement[]
     ).concat(advancedSearchElement);
   }
-
-  function isSearchResultData(data: unknown): data is {
-    results: SearchDataWithType[];
-  } {
-    return (
-      typeof data === "object" &&
-      data !== null &&
-      "results" in data &&
-      Array.isArray(data["results"])
-    );
-  }
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
@@ -180,20 +170,23 @@
     action="/search"
     bind:this={formElement}
     use:enhance={async () => {
-      return async ({ update, result }) => {
+      return async ({ update, result: incomingResults }) => {
+        if (
+          incomingResults.type === "success" &&
+          isSearchResultData(incomingResults.data)
+        ) {
+          error = undefined;
+          results = incomingResults.data.results;
+        } else if (incomingResults.type === "failure") {
+          results = [];
+          error = incomingResults.data;
+        } else {
+          console.log("Unknown return from search", incomingResults);
+        }
         await update({
           reset: false,
         });
         isSearching = false;
-        if (result.type === "success" && isSearchResultData(result.data)) {
-          error = undefined;
-          results = result.data.results;
-        } else if (result.type === "failure") {
-          results = [];
-          error = result.data;
-        } else {
-          console.log("Unknown return from search", result);
-        }
       };
     }}
     class="rounded-2xl bg-base-100 p-2 shadow"
