@@ -105,6 +105,7 @@
     "@keycloak/keycloak-admin-client": "^23.0.7",
     "@playwright/test": "^1.48.1",
     "@prisma/client": "^5.21.1",
+    "@sentry/sveltekit": "^8",
     "@shlinkio/shlink-js-sdk": "^1.2.0",
     "@stripe/stripe-js": "^3.5.0",
     "@tiptap/core": "^2.5.8",
