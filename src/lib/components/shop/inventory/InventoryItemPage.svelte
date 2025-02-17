@@ -7,7 +7,7 @@
   import { eventLink } from "$lib/utils/redirect";
   import Price from "$lib/components/Price.svelte";
   import type { InventoryItemLoadData } from "$lib/server/shop/inventory/getInventory";
-  import type { page } from "$app/stores";
+  import { page } from "$app/stores";
   import { getFileUrl } from "$lib/files/client";
 
   export let data: InventoryItemLoadData & typeof $page.data;
@@ -96,6 +96,6 @@
       </section>
     {/if}
 
-    <QRCode data={shoppable.title} />
+    <QRCode data={consumable.id} />
   </main>
 </div>

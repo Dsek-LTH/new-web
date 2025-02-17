@@ -73,6 +73,9 @@ importers:
       '@zenstackhq/server':
         specifier: ^1.12.5
         version: 1.12.5
+      '@zxing/library':
+        specifier: ^0.21.3
+        version: 0.21.3
       croppie:
         specifier: ^2.6.5
         version: 2.6.5
@@ -2151,6 +2154,10 @@ packages:
 
   '@zenstackhq/server@1.12.5':
     resolution: {integrity: sha512-iJjNyFoW18sMo6nNHIJiV+kzRrpWjCEH4IIBV/DVD53wXTXhXwVL+B0ezRWQgXTveRL57ekDrN2PvxgDQZAPNw==}
+
+  '@zxing/library@0.21.3':
+    resolution: {integrity: sha512-hZHqFe2JyH/ZxviJZosZjV+2s6EDSY0O24R+FQmlWZBZXP9IqMo7S3nb3+2LBWxodJQkSurdQGnqE7KXqrYgow==}
+    engines: {node: '>= 10.4.0'}
 
   '@zxing/text-encoding@0.9.0':
     resolution: {integrity: sha512-U/4aVJ2mxI0aDNI8Uq0wEhMgY+u4CNtEb0om3+y3+niDAsoTCOB33UF0sxpzqzdqXLqmvc+vZyAt4O8pPdfkwA==}
@@ -5652,6 +5659,10 @@ packages:
     peerDependencies:
       typescript: '>=4.2.0'
 
+  ts-custom-error@3.3.1:
+    resolution: {integrity: sha512-5OX1tzOjxWEgsr/YEUWSuPrQ00deKLh6D7OTWcvNHm12/7QPyRh8SYpyWvA4IZv8H/+GQWQEh/kwo95Q9OVW1A==}
+    engines: {node: '>=14.0.0'}
+
   ts-deepmerge@7.0.1:
     resolution: {integrity: sha512-JBFCmNenZdUCc+TRNCtXVM6N8y/nDQHAcpj5BlwXG/gnogjam1NunulB9ia68mnqYI446giMfpqeBFFkOleh+g==}
     engines: {node: '>=14.13.1'}
@@ -8447,6 +8458,12 @@ snapshots:
       url-pattern: 1.0.3
       zod: 3.23.8
       zod-validation-error: 1.5.0(zod@3.23.8)
+
+  '@zxing/library@0.21.3':
+    dependencies:
+      ts-custom-error: 3.3.1
+    optionalDependencies:
+      '@zxing/text-encoding': 0.9.0
 
   '@zxing/text-encoding@0.9.0':
     optional: true
@@ -12200,6 +12217,8 @@ snapshots:
   ts-api-utils@1.3.0(typescript@5.5.4):
     dependencies:
       typescript: 5.5.4
+
+  ts-custom-error@3.3.1: {}
 
   ts-deepmerge@7.0.1: {}
 

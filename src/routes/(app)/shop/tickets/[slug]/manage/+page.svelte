@@ -15,7 +15,11 @@
 <div class="flex justify-between">
   <h1 class="text-2xl">{ticket.title}</h1>
 
-  <a href="edit" class="btn btn-secondary">Redigera biljett</a>
+  <!-- TODO: Add dynamic text -->
+  <div class="flex gap-4">
+    <a href="edit" class="btn btn-secondary">Redigera biljett</a>
+    <a href="scan" class="btn btn-primary">Scanna biljett</a>
+  </div>
 </div>
 {#if ticket.description}
   <p class="text-lg">{ticket.description}</p>

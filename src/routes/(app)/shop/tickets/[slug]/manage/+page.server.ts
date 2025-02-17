@@ -11,6 +11,7 @@ import { zod } from "sveltekit-superforms/adapters";
 import { message, superValidate } from "sveltekit-superforms/server";
 import { z } from "zod";
 import { loadTicketData } from "./loadTicketData";
+import { consumeConsumable } from "$lib/server/shop/consumable";
 
 export type ManagedTicket = Ticket &
   Shoppable & {
@@ -60,38 +61,18 @@ export const load = async ({ locals, params }) => {
 };
 
 export const actions = {
-  consume: async ({ locals, request, params }) => {
+  consume: async ({ locals, request }) => {
     const { prisma } = locals;
     const form = await superValidate(
       request,
       zod(z.object({ consumableId: z.string() })),
     );
     if (!form.valid) return fail(400, { form });
-    try {
-      await prisma.consumable.update({
-        where: {
-          id: form.data.consumableId,
-          shoppableId: params.slug,
-        },
-        data: {
-          consumedAt: new Date(),
-        },
-      });
-    } catch (e) {
-      if (e instanceof Error)
-        return message(form, {
-          message: e.message,
-          type: "error",
-        });
-      return message(form, {
-        message: "Kunde inte konsumera biljetten.",
-        type: "error",
-      });
-    }
-    return message(form, {
-      message: "Biljetten har konsumerats.",
-      type: "success",
-    });
+    const consumeMessage = await consumeConsumable(
+      prisma,
+      form.data.consumableId,
+    );
+    return message(form, consumeMessage);
   },
   unconsume: async ({ locals, request, params }) => {
     const { prisma } = locals;
