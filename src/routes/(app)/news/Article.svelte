@@ -3,7 +3,7 @@
   import MarkdownBody from "$lib/components/MarkdownBody.svelte";
   import * as m from "$paraglide/messages";
   import { languageTag } from "$paraglide/runtime";
-  import { getFileUrl } from "$lib/files/client";
+  import Carousel from "$lib/components/Carousel.svelte";
 
   export let article: Article;
 </script>
@@ -17,14 +17,12 @@
     >
     </iframe>
   </figure>
-{:else if article.imageUrl}
-  <figure>
-    <img
-      class="mx-auto"
-      src={getFileUrl(article.imageUrl)}
-      alt={article.imageUrl}
-    />
-  </figure>
+{:else}
+  <Carousel
+    images={article.imageUrl === null
+      ? article.imageUrls
+      : [...article.imageUrls, article.imageUrl]}
+  />
 {/if}
 
 <h1 class="mb-8 text-2xl font-bold">{article.header}</h1>

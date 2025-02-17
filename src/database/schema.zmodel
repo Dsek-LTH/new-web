@@ -117,6 +117,7 @@ model Article {
   headerEn    String?          @map("header_en") @db.VarChar(255)
   body        String
   bodyEn      String?          @map("body_en")
+  imageUrls   String[]         @map("image_urls")        
   imageUrl    String?          @map("image_url") @db.Text
   youtubeUrl  String?          @map("youtube_url") @db.Text
   authorId    String           @map("author_id") @db.Uuid

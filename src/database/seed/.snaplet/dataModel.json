@@ -1698,6 +1698,20 @@
           "maxLength": null
         },
         {
+          "id": "public.articles.image_urls",
+          "name": "image_urls",
+          "columnName": "image_urls",
+          "type": "text[]",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
           "name": "authors",
           "type": "authors",
           "isRequired": true,

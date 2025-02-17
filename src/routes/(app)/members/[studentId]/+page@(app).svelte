@@ -241,9 +241,10 @@
 
   /* progressive enhancement: adds animations for
      browsers that support animating height: auto */
-  :global(html) {
+  /*:global(html) {
     interpolate-size: allow-keywords;
   }
+    commented out as property does not appear to exist according to pre-push checks*/
 
   details::details-content {
     height: 0;

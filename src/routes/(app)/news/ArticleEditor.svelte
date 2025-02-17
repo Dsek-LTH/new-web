@@ -16,7 +16,7 @@
   export let superform = superForm(data, {
     dataType: "json",
   });
-  let articleImage: string | undefined = undefined;
+  let articleImages: string[] = [];
   let articleVideo: string | undefined = undefined;
   const { form } = superform;
 </script>
@@ -29,7 +29,7 @@
       {superform}
       {allTags}
       {authorOptions}
-      bind:articleImage
+      bind:articleImages
       bind:articleVideo
     >
       <slot slot="form-end" name="form-end" />
@@ -51,7 +51,8 @@
         updatedAt: new Date(),
         removedAt: null,
         status: "draft",
-        imageUrl: articleImage ?? $form.imageUrl ?? null,
+        imageUrls: $form.imageUrls ?? articleImages,
+        imageUrl: $form.imageUrl ?? null,
         youtubeUrl: articleVideo ?? $form.youtubeUrl ?? null,
       }}
     >

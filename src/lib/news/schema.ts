@@ -17,9 +17,17 @@ export const articleSchema = z.object({
       }),
     )
     .default([]),
+  imageUrls: z.string().array().optional(),
   imageUrl: z.string().optional().nullable(),
   youtubeUrl: z.string().optional().nullable(),
-  // only for uploading files
+  // https://github.com/colinhacks/zod/pull/3118
+  images: z
+    .instanceof(File, { message: "Please upload a file." })
+    .refine((file) => !file || isFileImage(file), {
+      message: "Måste vara en bild",
+    })
+    .array()
+    .default([]),
   image: z
     .instanceof(File, { message: "Please upload a file" })
     .nullable()
