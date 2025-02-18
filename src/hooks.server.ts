@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/sveltekit";
 import { env } from "$env/dynamic/private";
 import keycloak from "$lib/server/keycloak";
 import authorizedPrismaClient from "$lib/server/authorizedPrisma";
@@ -32,6 +33,11 @@ import {
 } from "@prisma/client/runtime/library";
 import { verifyCostCenterData } from "./routes/(app)/expenses/verification";
 import { dev } from "$app/environment";
+
+Sentry.init({
+  dsn: "https://763ca90d83f725f70b31f0fd40e7ffda@o4508757277212672.ingest.de.sentry.io/4508757278523472",
+  tracesSampleRate: 1,
+});
 
 // TODO: This function should perhaps only be called during dev? Build? I'm not sure
 if (dev) verifyCostCenterData();
@@ -228,25 +234,28 @@ const themeHandle: Handle = async ({ event, resolve }) => {
 schedule.scheduleJob("0 0 * * *", () => keycloak.sync(authorizedPrismaClient));
 schedule.scheduleJob("0 0 * * *", meilisearchSync);
 
-export const handleError: HandleServerError = ({ error }) => {
-  if (error instanceof PrismaClientKnownRequestError) {
-    const { message, name, code } = error;
-    console.log("prisma known request error", { message, name, code });
+export const handleError: HandleServerError = Sentry.handleErrorWithSentry(
+  ({ error }) => {
+    if (error instanceof PrismaClientKnownRequestError) {
+      const { message, name, code } = error;
+      console.log("prisma known request error", { message, name, code });
+      return {
+        message: message,
+      };
+    } else if (error instanceof PrismaClientValidationError) {
+      console.error("prisma validation error", error.message, error.name);
+      return {
+        message: "Database validation error, see logs for more info",
+      };
+    }
     return {
-      message: message,
+      message: error instanceof Error ? error.message : `${error}`,
     };
-  } else if (error instanceof PrismaClientValidationError) {
-    console.error("prisma validation error", error.message, error.name);
-    return {
-      message: "Database validation error, see logs for more info",
-    };
-  }
-  return {
-    message: error instanceof Error ? error.message : `${error}`,
-  };
-};
+  },
+);
 
 export const handle = sequence(
+  Sentry.sentryHandle(),
   authHandle,
   i18n.handle(),
   databaseHandle,
