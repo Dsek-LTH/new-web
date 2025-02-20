@@ -65,10 +65,11 @@ function getRoleNames(id: string): string[] {
 async function getGroupId(keycloak: KcAdminClient, positionId: string) {
   const roleNames = getRoleNames(positionId);
   const groups = await keycloak.groups.find();
-  let group = groups.find((g) => g.name === roleNames[0]);
-  roleNames.slice(1).forEach((name) => {
-    group = group?.subGroups?.find((g) => g.name === name);
-  });
+  let group = groups.find((g) => g.name === positionId);
+  //roleNames.slice(1).forEach((name) => {
+  //group = group?.subGroups?.find((g) => g.name === name);
+  //});
+
   if (!group) {
     throw error(404, {
       message: `Failed to find group for position ${positionId}`,
@@ -147,8 +148,13 @@ async function addMandate(
         lastSynced: new Date(),
       },
     });
-  } catch (error) {
-    console.log(error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Error has to be any or unknown
+  } catch (error: any) {
+    console.log("addmandate sync error: ", error);
+    if (error.body?.statusDescription !== "markupdated") {
+      console.log("waiting");
+      await new Promise((r) => setTimeout(r, 1000));
+    }
   }
 }
 
@@ -187,6 +193,7 @@ async function deleteMandate(
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Error has to be any or unknown
   } catch (error: any) {
+    console.log("deletemandate sync error: ", error);
     if (error.body?.statusDescription === "markupdated") {
       await prisma.mandate.update({
         where: { id: mandateId },
@@ -194,8 +201,10 @@ async function deleteMandate(
           lastSynced: new Date(),
         },
       });
+    } else {
+      console.log("waiting");
+      await new Promise((r) => setTimeout(r, 1000));
     }
-    console.log(error);
   }
 }
 
@@ -237,21 +246,13 @@ async function updateMandate(prisma: PrismaClient) {
     `[${new Date().toISOString()}] adding ${mandatesToBeAdded.length} users to groups, deleting ${mandatesToBeDeleted.length} users from groups`,
   );
 
-  await promiseAllInBatches(
-    mandatesToBeDeleted,
-    async ({ positionId, member: { studentId }, id }) => {
-      deleteMandate(prisma, studentId!, positionId, id);
-    },
-    1,
-  );
+  for (const m of mandatesToBeAdded) {
+    await addMandate(prisma, m.member.studentId!, m.positionId, m.id);
+  }
 
-  await promiseAllInBatches(
-    mandatesToBeAdded,
-    async ({ positionId, member: { studentId }, id }) => {
-      addMandate(prisma, studentId!, positionId, id);
-    },
-    1,
-  );
+  for (const m of mandatesToBeDeleted) {
+    await deleteMandate(prisma, m.member.studentId!, m.positionId, m.id);
+  }
 }
 
 async function updateEmails(prisma: PrismaClient) {
